@@ -1,0 +1,54 @@
+version: '3.8'
+
+services:
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: taskdb
+      MYSQL_USER: taskuser
+      MYSQL_PASSWORD: taskpass
+    volumes:
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "3306:3306"
+    # El healthcheck es la pieza clave para evitar problemas de sincronización:
+    # el backend no arrancará hasta que MySQL responda "healthy" aquí abajo,
+    # no solo hasta que el contenedor haya arrancado (que es antes de que
+    # MySQL esté realmente listo para aceptar conexiones).
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-prootpass"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  db-admin:
+    image: phpmyadmin:latest
+    environment:
+      PMA_HOST: db
+      PMA_USER: root
+      PMA_PASSWORD: rootpass
+    ports:
+      - "8081:80"
+    depends_on:
+      - db
+
+  backend:
+    build: ./backend
+    environment:
+      DB_HOST: db
+      DB_USER: taskuser
+      DB_PASSWORD: taskpass
+      DB_NAME: taskdb
+    ports:
+      - "4000:3000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
