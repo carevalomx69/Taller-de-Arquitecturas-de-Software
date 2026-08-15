@@ -1,0 +1,12 @@
+{
+  "name": "gestor-tareas-monolito",
+  "version": "2.0.0",
+  "description": "Práctica 1: Arquitectura Monolítica (almacenamiento en memoria)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
