@@ -12,6 +12,14 @@ cada una.
 entre una carpeta y la siguiente — es la forma más directa de ver qué cambió
 y por qué.
 
+## Antes de empezar: Práctica 0
+
+[`00-practica-0-xampp/`](00-practica-0-xampp/) es una demostración guiada
+(no calificada) que usa XAMPP — algo que probablemente ya conoces de otras
+materias — para diseccionar en vivo qué es un monolito, antes de verlo con
+Docker. Usa un dominio distinto (una mini "biblioteca") a propósito, para
+no mezclarse con el hilo conductor del gestor de tareas.
+
 ## Las 9 prácticas
 
 | # | Arquitectura | Problema que resuelve | Carpeta | Diapositiva de referencia |
