@@ -112,5 +112,3 @@ en XAMPP, lo que significa que esas dos cosas normalmente están juntas.
 ## Entregable
 
 Esta práctica **no se califica** — es una demostración guiada en clase.
-Si quieres una constancia de participación, pide a los alumnos una
-captura de pantalla del JSON de respuesta en su navegador.
