@@ -98,6 +98,14 @@ en XAMPP, lo que significa que esas dos cosas normalmente están juntas.
 - Un solo punto de falla (la base de datos) puede tumbar una aplicación
   entera, sin que el código tenga ningún error.
 
+## Errores comunes y solución
+
+| Problema | Causa probable | Solución |
+|---|---|---|
+| `Access denied for user 'root'@'localhost' (using password: NO)` al abrir `index.php` | Versiones recientes de XAMPP ya no dejan a `root` sin contraseña por defecto | Revisa `[carpeta xampp]/phpMyAdmin/config.inc.php` y busca `$cfg['Servers'][$i]['password']` — si tiene un valor, cópialo a `$password` en `index.php`. Si sigue vacío, entra a phpMyAdmin → Cuentas de usuario → `root` → Editar privilegios → asígnale una contraseña simple (ej. `root`) y actualiza `index.php` con esa misma contraseña. |
+| La página muestra un error 404 en vez del JSON | La carpeta no quedó dentro de `htdocs/`, o el nombre de la carpeta no coincide con la URL | Confirma que la ruta sea `[carpeta xampp]/htdocs/nombre-carpeta/index.php` y que la URL use ese mismo `nombre-carpeta` |
+| `Table 'monolito_demo_db.prestamos' doesn't exist` | El script `schema.sql` no se ejecutó completo en phpMyAdmin | Vuelve a pegar todo el contenido de `sql/schema.sql` en la pestaña SQL de phpMyAdmin y ejecútalo de nuevo |
+
 ## Preguntas de reflexión
 
 1. Cuando apagaste MySQL y la app dejó de funcionar, ¿se cayó "la red" o
@@ -112,3 +120,5 @@ en XAMPP, lo que significa que esas dos cosas normalmente están juntas.
 ## Entregable
 
 Esta práctica **no se califica** — es una demostración guiada en clase.
+Si quieres una constancia de participación, pide a los alumnos una
+captura de pantalla del JSON de respuesta en su navegador.
