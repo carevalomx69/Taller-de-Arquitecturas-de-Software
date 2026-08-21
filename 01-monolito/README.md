@@ -66,6 +66,22 @@ Nada — esta es la primera práctica. Es el punto de partida de toda la unidad.
   variables de JavaScript en memoria — tan "monolito" como se puede ser.
 - **Un solo `docker build` / `docker run`.** No hay `docker-compose.yml`
   todavía porque no hay nada que orquestar: es un solo contenedor.
+- **`server.js` usa "dos sombreros" a la vez: servidor de páginas y API.**
+  La ruta `/` manda el HTML (`res.sendFile(...)`) — eso **no** es la API.
+  Las rutas que empiezan con `/api/...` (`/api/register`, `/api/login`,
+  `/api/tasks/...`) sí lo son: reciben una petición HTTP y responden JSON,
+  no HTML. Es el mismo archivo, el mismo proceso, pero dos
+  responsabilidades distintas conviviendo juntas — por eso, a partir de la
+  Práctica 2, separamos esos dos sombreros en dos contenedores distintos
+  (`frontend` sirve páginas, `backend` es *solo* la API).
+
+  Dicho de otro modo: una **API** es, en el fondo, el mismo concepto de
+  **Interfaz** que vimos en Unidad I (el contrato que define qué
+  operaciones ofrece un componente, sin decir cómo se implementan) — nada
+  más que aplicado sobre una red, usando HTTP como el "idioma" para
+  pedirlas. `public/app.js` no sabe (ni le importa) si las tareas viven en
+  memoria o en una base de datos — solo sabe que puede pedir
+  `GET /api/tasks/1` y va a recibir una lista.
 
 ## Errores comunes y solución
 
