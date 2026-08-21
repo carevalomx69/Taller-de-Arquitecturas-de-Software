@@ -20,6 +20,11 @@ materias — para diseccionar en vivo qué es un monolito, antes de verlo con
 Docker. Usa un dominio distinto (una mini "biblioteca") a propósito, para
 no mezclarse con el hilo conductor del gestor de tareas.
 
+**¿Problemas instalando Docker?** Antes de la Práctica 1 revisa el
+[`DOCKER-FAQ.md`](DOCKER-FAQ.md) — cubre los dos problemas más frecuentes
+(falta WSL2 en Windows, virtualización deshabilitada en el BIOS) y varios
+más.
+
 ## Las 9 prácticas
 
 | # | Arquitectura | Problema que resuelve | Carpeta | Diapositiva de referencia |
