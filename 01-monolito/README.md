@@ -76,7 +76,7 @@ Nada, esta es la primera práctica. Es el punto de partida de toda la unidad.
    tendrías que tocar? ¿Por qué crees que eso es un problema a largo plazo?
 2. ¿Qué tendría que pasar para que este monolito dejara de ser suficiente
    para el negocio? (Piensa en usuarios, no en tecnología.)
-3. Compara esta arquitectura con la disección de XAMPP que vimos en clase:
+3. Compara esta arquitectura con la disección de XAMPP que se vio en clase:
    ¿en qué se parecen? ¿en qué son distintas, aunque ambas se sientan
    "monolíticas"?
 
