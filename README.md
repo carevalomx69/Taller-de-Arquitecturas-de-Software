@@ -52,7 +52,7 @@ más.
 ## Flujo de trabajo entre prácticas
 
 Cada práctica corre **en limpio**, sin depender de contenedores de la
-práctica anterior — y de hecho no debe hacerlo, para que la comparación
+práctica anterior. Esto es asi para que la comparación
 entre prácticas sea siempre sobre el código, no sobre datos residuales de
 una corrida pasada.
 
