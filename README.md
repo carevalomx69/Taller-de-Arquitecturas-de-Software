@@ -49,6 +49,44 @@ más.
    Práctica 1 (Monolito) es la única excepción y usa `docker build` /
    `docker run` directo, porque todavía no hay nada que orquestar.
 
+## Flujo de trabajo entre prácticas
+
+Cada práctica corre **en limpio**, sin depender de contenedores de la
+práctica anterior — y de hecho no debe hacerlo, para que la comparación
+entre prácticas sea siempre sobre el código, no sobre datos residuales de
+una corrida pasada.
+
+**Antes de empezar una práctica nueva**, dentro de la carpeta de la
+práctica **anterior**:
+
+```
+docker-compose down -v
+```
+
+El `-v` es la parte importante: borra también los **volúmenes** (los
+datos de la base de datos), para que la siguiente práctica arranque con
+los datos definidos en su propio `init.sql`, no con residuos de la corrida
+anterior.
+
+Para la Práctica 1 (que no usa `docker-compose`, solo `docker run`):
+
+```
+docker stop <container_id>
+```
+
+De vez en cuando — no necesariamente entre cada práctica, pero sí si el
+disco se empieza a llenar de imágenes viejas:
+
+```
+docker system prune
+```
+
+**Por qué importa:** los puertos se repiten a propósito entre prácticas
+(8080, 4000, 3306, 8081...) para no tener que memorizar 9 combinaciones
+distintas. Esto significa que si dejas corriendo una práctica anterior, la
+siguiente no podrá levantar sus servicios — verás el error
+`"port is already allocated"` del [`DOCKER-FAQ.md`](DOCKER-FAQ.md).
+
 ## Convenciones que se mantienen en las 9 prácticas
 
 - Mismo modelo de datos (Usuario, Tarea) — ver `00-recursos-comunes/`.
