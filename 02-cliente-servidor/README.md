@@ -21,6 +21,12 @@ por HTTP, cada uno en su propio puerto.
 
 ## Requisitos previos
 
+- **Antes de empezar:** si tienes contenedores de otra práctica corriendo,
+  ciérralos primero — ver
+  ["Flujo de trabajo entre prácticas"](../README.md#flujo-de-trabajo-entre-prácticas)
+  en el README raíz.
+
+
 - Práctica 1 completada.
 - Haber revisado las diapositivas: "Las redes, TCP/IP", "Concepto de Puerto",
   "APIs", "Base de datos como servicio", "Tecnología de Dockers (Compose)" y
