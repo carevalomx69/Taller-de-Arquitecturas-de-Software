@@ -8,7 +8,7 @@ línea base de la que partirán las siguientes 8 prácticas.
 
 ## Qué construimos sobre la práctica anterior
 
-Nada — esta es la primera práctica. Es el punto de partida de toda la unidad.
+Nada, esta es la primera práctica. Es el punto de partida de toda la unidad.
 
 ## Requisitos previos
 
