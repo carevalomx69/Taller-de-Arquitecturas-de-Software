@@ -8,9 +8,14 @@ línea base de la que partirán las siguientes 8 prácticas.
 
 ## Qué construimos sobre la práctica anterior
 
-Nada, esta es la primera práctica. Es el punto de partida de toda la unidad.
+Nada — esta es la primera práctica. Es el punto de partida de toda la unidad.
 
 ## Requisitos previos
+
+- **Antes de empezar:** si tienes contenedores de otra práctica corriendo,
+  ciérralos primero — ver
+  ["Flujo de trabajo entre prácticas"](../README.md#flujo-de-trabajo-entre-prácticas)
+  en el README raíz.
 
 - Docker Desktop instalado y corriendo.
 - Haber revisado la diapositiva **"Tecnología de Dockers"** (contenedor,
@@ -64,6 +69,13 @@ Nada, esta es la primera práctica. Es el punto de partida de toda la unidad.
 
 ## Errores comunes y solución
 
+**¿Docker Desktop no arranca o no se instala correctamente?** Revisa
+primero el [`DOCKER-FAQ.md`](../DOCKER-FAQ.md) en la raíz del repo — cubre
+los problemas de instalación más frecuentes (falta WSL2, virtualización
+deshabilitada en el BIOS, antivirus bloqueando Docker, etc.).
+
+Errores ya con Docker funcionando:
+
 | Problema | Causa probable | Solución |
 |---|---|---|
 | `Error: bind: address already in use` al hacer `docker run` | Ya tienes algo corriendo en el puerto 3000 | Cambia el mapeo a `-p 3001:3000` y abre `http://localhost:3001` |
@@ -76,7 +88,7 @@ Nada, esta es la primera práctica. Es el punto de partida de toda la unidad.
    tendrías que tocar? ¿Por qué crees que eso es un problema a largo plazo?
 2. ¿Qué tendría que pasar para que este monolito dejara de ser suficiente
    para el negocio? (Piensa en usuarios, no en tecnología.)
-3. Compara esta arquitectura con la disección de XAMPP que se vio en clase:
+3. Compara esta arquitectura con la disección de XAMPP que vimos en clase:
    ¿en qué se parecen? ¿en qué son distintas, aunque ambas se sientan
    "monolíticas"?
 
@@ -86,7 +98,7 @@ Sube a la tarea correspondiente en Aula Virtual:
 
 1. Captura de pantalla de la app funcionando en el navegador (con al menos
    una tarea marcada como completada).
-2. Captura del `docker run` en su terminal mostrando el mensaje
+2. Captura del `docker run` en tu terminal mostrando el mensaje
    `Monolithic server running on http://localhost:3000`.
-3. Un archivo `REFLEXION.md` (o `.txt`, o `.pdf` o `.docx`) con sus respuestas a las 3 preguntas
-   de arriba. Un par de líneas por pregunta es suficiente.
+3. Un archivo `REFLEXION.md` (o `.txt`) con tus respuestas a las 3 preguntas
+   de arriba — un par de líneas por pregunta es suficiente.
