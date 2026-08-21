@@ -2,8 +2,8 @@
 
 Esta sección recopila los problemas de instalación más frecuentes que
 hemos visto en clase, con su solución paso a paso. Si Docker Desktop no
-arranca o algo falla antes de siquiera llegar a `docker build`, revisa
-aquí primero antes de escribirle al profesor.
+arranca o algo falla antes de siquiera llegar a `docker build`, puedes revisar
+aquí primero antes de consultar al profesor.
 
 ## Requisitos antes de instalar
 
