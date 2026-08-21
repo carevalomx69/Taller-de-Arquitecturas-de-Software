@@ -86,7 +86,7 @@ Sube a la tarea correspondiente en Aula Virtual:
 
 1. Captura de pantalla de la app funcionando en el navegador (con al menos
    una tarea marcada como completada).
-2. Captura del `docker run` en tu terminal mostrando el mensaje
+2. Captura del `docker run` en su terminal mostrando el mensaje
    `Monolithic server running on http://localhost:3000`.
-3. Un archivo `REFLEXION.md` (o `.txt`) con tus respuestas a las 3 preguntas
-   de arriba — un par de líneas por pregunta es suficiente.
+3. Un archivo `REFLEXION.md` (o `.txt`, o `.pdf` o `.docx`) con sus respuestas a las 3 preguntas
+   de arriba. Un par de líneas por pregunta es suficiente.
