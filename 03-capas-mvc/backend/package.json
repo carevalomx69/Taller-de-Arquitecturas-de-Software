@@ -1,0 +1,14 @@
+{
+  "name": "gestor-tareas-backend-capas-mvc",
+  "version": "1.0.0",
+  "description": "Práctica 3: Capas / MVC",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "mysql2": "^3.9.0",
+    "cors": "^2.8.5"
+  }
+}
