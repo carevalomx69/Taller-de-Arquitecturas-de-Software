@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestor de Tareas - Cliente/Servidor</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Gestor de Tareas (Cliente/Servidor)</h1>
+
+        <div id="auth-section" class="card">
+            <h2>Acceso</h2>
+            <input type="text" id="username" placeholder="Nombre de usuario">
+            <input type="password" id="password" placeholder="Contraseña">
+            <button id="login-btn">Iniciar Sesión</button>
+            <button id="register-btn">Registrar</button>
+            <p id="auth-error" class="error"></p>
+        </div>
+
+        <div id="tasks-section" class="card hidden">
+            <h2 id="welcome-message"></h2>
+            <div class="task-form">
+                <input type="text" id="new-task-title" placeholder="Nueva tarea...">
+                <button id="add-task-btn">Añadir Tarea</button>
+            </div>
+            <h3>Mis Tareas</h3>
+            <ul id="task-list"></ul>
+            <button id="logout-btn">Cerrar Sesión</button>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
