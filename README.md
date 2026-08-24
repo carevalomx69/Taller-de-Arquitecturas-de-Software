@@ -21,10 +21,10 @@ Docker. Usa un dominio distinto (una mini "biblioteca") a propósito, para
 no mezclarse con el hilo conductor del gestor de tareas.
 
 **¿Problemas instalando Docker, o quieres descargar solo una carpeta del
-repo?** Revisa el [`FAQ-TECNICO.md`](FAQ-TECNICO.md) — cubre los problemas
+repo?** Revisa el [`FAQ-TECNICO.md`](FAQ-TECNICO.md) que cubre los problemas
 de instalación más frecuentes (falta WSL2 en Windows, virtualización
 deshabilitada en el BIOS) y cómo usar `git sparse-checkout` para bajar
-solo la práctica que necesitas.
+solo la carpeta de práctica que necesitas.
 
 ## Las 9 prácticas
 
