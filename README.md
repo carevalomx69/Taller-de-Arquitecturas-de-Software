@@ -20,10 +20,11 @@ materias — para diseccionar en vivo qué es un monolito, antes de verlo con
 Docker. Usa un dominio distinto (una mini "biblioteca") a propósito, para
 no mezclarse con el hilo conductor del gestor de tareas.
 
-**¿Problemas instalando Docker?** Antes de la Práctica 1 revisa el
-[`DOCKER-FAQ.md`](DOCKER-FAQ.md) — cubre los dos problemas más frecuentes
-(falta WSL2 en Windows, virtualización deshabilitada en el BIOS) y varios
-más.
+**¿Problemas instalando Docker, o quieres descargar solo una carpeta del
+repo?** Revisa el [`FAQ-TECNICO.md`](FAQ-TECNICO.md) — cubre los problemas
+de instalación más frecuentes (falta WSL2 en Windows, virtualización
+deshabilitada en el BIOS) y cómo usar `git sparse-checkout` para bajar
+solo la práctica que necesitas.
 
 ## Las 9 prácticas
 
@@ -52,7 +53,7 @@ más.
 ## Flujo de trabajo entre prácticas
 
 Cada práctica corre **en limpio**, sin depender de contenedores de la
-práctica anterior. Esto es asi para que la comparación
+práctica anterior — y de hecho no debe hacerlo, para que la comparación
 entre prácticas sea siempre sobre el código, no sobre datos residuales de
 una corrida pasada.
 
@@ -85,7 +86,7 @@ docker system prune
 (8080, 4000, 3306, 8081...) para no tener que memorizar 9 combinaciones
 distintas. Esto significa que si dejas corriendo una práctica anterior, la
 siguiente no podrá levantar sus servicios — verás el error
-`"port is already allocated"` del [`DOCKER-FAQ.md`](DOCKER-FAQ.md).
+`"port is already allocated"` del [`FAQ-TECNICO.md`](FAQ-TECNICO.md).
 
 ## Convenciones que se mantienen en las 9 prácticas
 
