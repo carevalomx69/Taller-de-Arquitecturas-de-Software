@@ -89,7 +89,7 @@ moderna de MVC en una arquitectura API + SPA, tan válida como la clásica.
 | Problema | Causa probable | Solución |
 |---|---|---|
 | `Cannot find module '../models/taskModel'` | Ruta relativa incorrecta al mover/renombrar un archivo | Revisa que la estructura de carpetas coincida exactamente con la de este README |
-| Los mismos errores de la Práctica 2 (puerto ocupado, `Access denied`, etc.) | Misma causa que antes — la topología de contenedores es la misma | Revisa el [`DOCKER-FAQ.md`](../DOCKER-FAQ.md) y el README de la Práctica 2 |
+| Los mismos errores de la Práctica 2 (puerto ocupado, `Access denied`, etc.) | Misma causa que antes — la topología de contenedores es la misma | Revisa el [`FAQ-TECNICO.md`](../FAQ-TECNICO.md) y el README de la Práctica 2 |
 
 ## Preguntas de reflexión
 
