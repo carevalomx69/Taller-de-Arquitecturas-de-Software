@@ -84,6 +84,14 @@ por HTTP, cada uno en su propio puerto.
 
 ## Errores comunes y solución
 
+**¿Docker Desktop no arranca o no se instala correctamente?** Revisa
+primero el [`FAQ-TECNICO.md`](../FAQ-TECNICO.md) en la raíz del repo —
+cubre los problemas de instalación más frecuentes (falta WSL2,
+virtualización deshabilitada en el BIOS, antivirus bloqueando Docker,
+etc.) y también cómo descargar solo esta carpeta con `git sparse-checkout`.
+
+Errores ya con Docker funcionando:
+
 | Problema | Causa probable | Solución |
 |---|---|---|
 | El backend se reinicia varias veces (`Esperando a la base de datos...`) | MySQL sigue inicializando | Es normal las primeras veces; espera, el `healthcheck` hará que continúe solo |
