@@ -98,7 +98,7 @@ datos" (MySQL).
 | Problema | Causa probable | Solución |
 |---|---|---|
 | `node test_domain.js` no corre / `Cannot find module` | No corriste `npm install` primero | Ejecuta `npm install` dentro de `backend/` antes de las pruebas |
-| Los mismos errores de Docker de prácticas anteriores | Misma causa que antes | Revisa el [`DOCKER-FAQ.md`](../DOCKER-FAQ.md) |
+| Los mismos errores de Docker de prácticas anteriores | Misma causa que antes | Revisa el [`FAQ-TECNICO.md`](../FAQ-TECNICO.md) |
 
 ## Preguntas de reflexión
 
