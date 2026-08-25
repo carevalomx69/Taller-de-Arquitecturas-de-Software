@@ -78,8 +78,86 @@ por HTTP, cada uno en su propio puerto.
   que tus tareas siguen ahí — a diferencia del Monolito, los datos ya no
   dependen del proceso de la aplicación.
 - **El frontend llama al backend por su URL completa**
-  (`http://localhost:4000`), no por una ruta relativa. Por primera el cliente y servidor están, literalmente, en direcciones
+  (`http://localhost:4000`), no por una ruta relativa. Es la primera vez en
+  el curso que cliente y servidor están, literalmente, en direcciones
   distintas.
+
+## Experimento: apagar y encender servicios
+
+Con los 4 contenedores ya corriendo (`docker-compose up --build` en otra
+terminal, o con `-d` en segundo plano), abre una segunda terminal en esta
+misma carpeta y prueba lo siguiente — es el mismo "choque de red" que
+viviste apagando MySQL en XAMPP, pero ahora puedes apagar **cualquier**
+pieza por separado, no solo la base de datos.
+
+Primero, revisa el estado de los 4 servicios:
+
+```
+docker-compose ps
+```
+
+### Experimento 1 — Apagar la base de datos
+
+```
+docker-compose stop db
+```
+
+Regresa al navegador (`http://localhost:8080`) e intenta crear una tarea.
+La página **sigue cargando** (el frontend no depende de `db`), pero la
+acción falla — el backend no puede completar la consulta SQL. Revisa los
+logs del backend (`docker-compose logs backend`) y verás el error de
+conexión.
+
+Vuelve a prenderla:
+```
+docker-compose start db
+```
+Refresca la página: todo vuelve a funcionar, **y tus tareas anteriores
+siguen ahí** — los datos viven en el volumen de `db`, no en el proceso del
+backend ni en el del frontend.
+
+### Experimento 2 — Apagar el backend
+
+```
+docker-compose stop backend
+```
+
+El frontend (`http://localhost:8080`) sigue cargando perfectamente — Nginx
+no necesita al backend para servir HTML/CSS/JS. Pero cualquier acción que
+dependa de la API (login, ver tareas, crear una) falla con un error de
+conexión en la consola del navegador. Esto demuestra que "la página carga"
+y "la aplicación funciona" son dos cosas distintas.
+
+```
+docker-compose start backend
+```
+
+### Experimento 3 — Apagar el frontend
+
+```
+docker-compose stop frontend
+```
+
+Ahora `http://localhost:8080` ni siquiera responde. Pero el backend sigue
+vivo — pruébalo directamente, sin pasar por el navegador de la app:
+```
+curl http://localhost:4000/api/health
+```
+Deberías recibir la respuesta JSON de todos modos. El backend no necesita
+al frontend para funcionar — es el cliente el que necesita al servidor,
+no al revés.
+
+```
+docker-compose start frontend
+```
+
+### La pregunta que conecta los tres experimentos
+
+En cada caso, **dos de los tres servicios (frontend/backend/db) siguieron
+"vivos" según `docker-compose ps`**, pero la aplicación completa solo
+funciona cuando los tres están arriba a la vez. ¿En qué se parece esto a
+lo que viste con Apache y MySQL en XAMPP? ¿En qué es distinto, ahora que
+son tres piezas en vez de dos?
 
 ## Errores comunes y solución
 
