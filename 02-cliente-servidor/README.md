@@ -78,8 +78,7 @@ por HTTP, cada uno en su propio puerto.
   que tus tareas siguen ahí — a diferencia del Monolito, los datos ya no
   dependen del proceso de la aplicación.
 - **El frontend llama al backend por su URL completa**
-  (`http://localhost:4000`), no por una ruta relativa. Es la primera vez en
-  el curso que cliente y servidor están, literalmente, en direcciones
+  (`http://localhost:4000`), no por una ruta relativa. Por primera el cliente y servidor están, literalmente, en direcciones
   distintas.
 
 ## Errores comunes y solución
