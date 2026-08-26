@@ -83,10 +83,21 @@ Nada — esta es la primera práctica. Es el punto de partida de toda la unidad.
   memoria o en una base de datos — solo sabe que puede pedir
   `GET /api/tasks/1` y va a recibir una lista.
 
+  **¿Y qué es un endpoint?** Si la API es el conjunto completo de
+  "preguntas" que le puedes hacer al servidor, un **endpoint** es cada
+  pregunta individual — la combinación de una **ruta** (`/api/tasks/:userId`)
+  y un **verbo HTTP** (`GET`, `POST`, `PATCH`...). `GET /api/tasks` y
+  `POST /api/tasks` son dos endpoints *distintos*, aunque compartan la
+  misma ruta, porque el verbo es parte de su identidad. En `server.js`,
+  cada línea `app.get(...)`, `app.post(...)` o `app.patch(...)` que
+  empieza con `/api/` define exactamente un endpoint.
+  memoria o en una base de datos — solo sabe que puede pedir
+  `GET /api/tasks/1` y va a recibir una lista.
+
 ## Errores comunes y solución
 
 **¿Docker Desktop no arranca o no se instala correctamente?** Revisa
-primero el [`DOCKER-FAQ.md`](../DOCKER-FAQ.md) en la raíz del repo — cubre
+primero el [`FAQ-TECNICO.md`](../FAQ-TECNICO.md) en la raíz del repo — cubre
 los problemas de instalación más frecuentes (falta WSL2, virtualización
 deshabilitada en el BIOS, antivirus bloqueando Docker, etc.).
 
