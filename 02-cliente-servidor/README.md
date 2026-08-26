@@ -62,6 +62,12 @@ por HTTP, cada uno en su propio puerto.
 5. Abre también `http://localhost:8081` — ahí está phpMyAdmin (usuario
    `root`, contraseña `rootpass`). Entra a la base `taskdb` y observa las
    tablas `users` y `tasks` mientras usas la app desde el otro puerto.
+
+   *(Si en vez de phpMyAdmin prefieres conectarte con un cliente de
+   escritorio como MySQL Workbench o DBeaver, usa `localhost:3307` — ese es
+   el puerto que expusimos hacia tu máquina; por dentro de la red de
+   Docker, el backend y phpMyAdmin siguen hablándole a `db` por el puerto
+   3306 de siempre.)*
 6. Registra un usuario, agrega tareas, marca alguna como completada, y
    **refresca la tabla en phpMyAdmin** para ver los cambios reflejados ahí.
 
@@ -174,7 +180,7 @@ Errores ya con Docker funcionando:
 | El backend se reinicia varias veces (`Esperando a la base de datos...`) | MySQL sigue inicializando | Es normal las primeras veces; espera, el `healthcheck` hará que continúe solo |
 | `Access denied for user 'taskuser'` | Volumen de MySQL de una corrida anterior con credenciales distintas | `docker-compose down -v` (el `-v` borra el volumen) y vuelve a levantar |
 | El navegador no carga las tareas y la consola muestra un error de CORS | Backend no está corriendo aún o se modificó sin reiniciar | Revisa que `docker-compose ps` muestre los 4 servicios como `Up` |
-| Puerto 3306, 4000, 8080 u 8081 ya en uso | Otro proceso (o otra práctica) sigue corriendo | `docker-compose down` en la carpeta que lo esté usando, o cambia el puerto expuesto en `docker-compose.yml` |
+| Puerto 3307, 4000, 8080 u 8081 ya en uso | Otro proceso (o otra práctica) sigue corriendo — **el 3307 es especialmente común si tienes MySQL Server o XAMPP instalados** (ya sea corriendo, o configurados para iniciar solos con Windows) | Revisa el método para identificar qué usa el puerto en el [`FAQ-TECNICO.md`](../FAQ-TECNICO.md#5-puertos-ocupados-cómo-saber-qué-los-está-usando); o `docker-compose down` en la carpeta que lo esté usando; o cambia el puerto expuesto (el número de la izquierda) en `docker-compose.yml` |
 
 ## Preguntas de reflexión
 
