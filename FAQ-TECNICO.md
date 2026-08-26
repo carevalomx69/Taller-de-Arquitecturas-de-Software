@@ -98,7 +98,7 @@ Solo se permite un uso de cada dirección de socket...
 
 **Causa:** Otro proceso ya está usando ese puerto. Para el puerto 3306 en
 particular, la causa casi siempre es **un MySQL que ya vive en tu máquina
-fuera de Docker**, muy frecuentemente XAMPP (¡el mismo que pudo haberse instalado
+fuera de Docker**, muy frecuentemente XAMPP (el mismo que pudo haberse instalado
 para la Práctica 0), o una instalación de MySQL Server que quedó
 configurada para iniciar automáticamente con Windows, aunque no la hayas
 abierto tú a propósito. Para 8080 o 80, suele ser Skype, IIS
