@@ -88,21 +88,78 @@ dej e de animarse (indica que el motor ya está listo). Puede tardar
 ## 4. "Error: bind: address already in use" / "port is already allocated"
 
 **Síntoma:** Al hacer `docker run` o `docker-compose up`, un puerto
-reporta que ya está en uso.
+reporta que ya está en uso. Un caso muy específico y frecuente en este
+curso:
+```
+Error response from daemon: ports are not available: exposing port
+TCP 0.0.0.0:3306 -> 127.0.0.1:0: listen tcp 0.0.0.0:3306: bind:
+Solo se permite un uso de cada dirección de socket...
+```
 
-**Causa:** Otro proceso — muy probablemente un contenedor de una práctica
-anterior que no cerraste — ya está usando ese puerto.
+**Causa:** Otro proceso ya está usando ese puerto. Para el puerto 3306 en
+particular, la causa casi siempre es **un MySQL que ya vive en tu máquina
+fuera de Docker** — muy frecuentemente XAMPP (¡el mismo que instalaste
+para la Práctica 0!), o una instalación de MySQL Server que quedó
+configurada para iniciar automáticamente con Windows, aunque no la hayas
+abierto tú a propósito. Para 8080 o 80, suele ser Skype, IIS
+("World Wide Web Publishing Service" de Windows) u otro proyecto de
+Docker que dejaste corriendo.
 
 **Solución:**
-- Revisa qué sigue corriendo: `docker ps`
-- Detén lo que ya no necesites: `docker stop <id>`, o `docker-compose down`
-  dentro de la carpeta de esa práctica.
-- Si necesitas correr dos prácticas al mismo tiempo, cambia el puerto
-  expuesto (por ejemplo `-p 3001:3000` en vez de `-p 3000:3000`).
+- A partir de esta práctica, el `docker-compose.yml` ya expone MySQL en el
+  puerto **3307** (no 3306) del lado de tu máquina, precisamente para
+  evitar este choque tan común — asegúrate de tener la versión más
+  reciente del repo.
+- Si el conflicto persiste (en 3307, 8080, 4000 u 8081), identifica qué lo
+  está usando con el método de la siguiente sección, y detén ese programa
+  o cambia el puerto expuesto (el número de la **izquierda** en
+  `"host:contenedor"`, por ejemplo `"3308:3306"`).
+- Revisa también qué sigue corriendo de Docker: `docker ps`, y detén lo
+  que ya no necesites: `docker stop <id>`, o `docker-compose down` dentro
+  de la carpeta de esa práctica.
 
 ---
 
-## 5. Docker Desktop pide reiniciar en bucle, o el ícono nunca termina de cargar
+## 5. Puertos ocupados: cómo saber qué los está usando
+
+Antes de cambiar cualquier puerto a ciegas, vale la pena identificar qué
+lo está ocupando — a veces es más rápido cerrar ese programa que editar
+`docker-compose.yml`.
+
+**Windows — línea de comandos (PowerShell o CMD):**
+```
+netstat -ano | findstr :3306
+```
+La última columna es el **PID** (identificador del proceso). Para saber
+qué programa es:
+```
+tasklist /FI "PID eq <el número que salió>"
+```
+
+**Windows — más visual, sin comandos:** abre el **Monitor de recursos**
+(escribe `resmon` en el menú Inicio) → pestaña **Red** → sección
+**Puertos de escucha**. Ahí puedes ordenar por puerto y ver el nombre del
+programa directamente, sin tener que cruzar el PID a mano.
+
+**macOS / Linux:**
+```
+lsof -i :3306
+```
+
+**Si el proceso resulta ser XAMPP o un servicio de MySQL:** no necesitas
+desinstalar nada — basta con apagarlo mientras trabajas en esta práctica.
+Para XAMPP, usa el botón **Stop** en su panel de control (el mismo que ya
+conoces de la Práctica 0). Para un servicio de MySQL de Windows, búscalo
+en `services.msc` y detenlo ahí, o configúralo para que no inicie
+automáticamente si vas a usar Docker con frecuencia.
+
+*(Este método de `netstat`/`resmon` no es exclusivo de Docker — te va a
+servir en cualquier materia donde levantes un servidor local, XAMPP
+incluido.)*
+
+---
+
+## 6. Docker Desktop pide reiniciar en bucle, o el ícono nunca termina de cargar
 
 **Causa común:** Un antivirus de terceros (no el Defender de Windows) o
 una política de seguridad institucional está bloqueando Hyper-V o el
@@ -115,7 +172,7 @@ tenga políticas restringidas — consulta con el área de sistemas.
 
 ---
 
-## 6. (Mac con Apple Silicon: M1/M2/M3) "no matching manifest for linux/arm64" o el contenedor no arranca
+## 7. (Mac con Apple Silicon: M1/M2/M3) "no matching manifest for linux/arm64" o el contenedor no arranca
 
 **Causa:** Algunas imágenes de Docker Hub no publican una versión para
 arquitectura ARM (Apple Silicon).
