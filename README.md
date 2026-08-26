@@ -21,10 +21,10 @@ Docker. Usa un dominio distinto (una mini "biblioteca") a propósito, para
 no mezclarse con el hilo conductor del gestor de tareas.
 
 **¿Problemas instalando Docker, o quieres descargar solo una carpeta del
-repo?** Revisa el [`FAQ-TECNICO.md`](FAQ-TECNICO.md) que cubre los problemas
+repo?** Revisa el [`FAQ-TECNICO.md`](FAQ-TECNICO.md) — cubre los problemas
 de instalación más frecuentes (falta WSL2 en Windows, virtualización
 deshabilitada en el BIOS) y cómo usar `git sparse-checkout` para bajar
-solo la carpeta de práctica que necesitas.
+solo la práctica que necesitas.
 
 ## Las 9 prácticas
 
@@ -83,7 +83,7 @@ docker system prune
 ```
 
 **Por qué importa:** los puertos se repiten a propósito entre prácticas
-(8080, 4000, 3306, 8081...) para no tener que memorizar 9 combinaciones
+(8080, 4000, 3307, 8081...) para no tener que memorizar 9 combinaciones
 distintas. Esto significa que si dejas corriendo una práctica anterior, la
 siguiente no podrá levantar sus servicios — verás el error
 `"port is already allocated"` del [`FAQ-TECNICO.md`](FAQ-TECNICO.md).
