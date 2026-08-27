@@ -84,6 +84,50 @@ moderna de MVC en una arquitectura API + SPA, tan válida como la clásica.
 - **Ningún archivo del `frontend/` cambió.** Es la prueba de que separar
   el backend en capas no debería afectar a quien lo consume desde afuera.
 
+## Preguntas frecuentes sobre el código
+
+**¿Qué hace cada capa, concretamente, en esta aplicación?**
+
+| Capa | Archivo | Qué hace de verdad |
+|---|---|---|
+| Rutas | `routes/taskRoutes.js` | Declara: "si llega un `POST` a `/`, avísale a `taskController.create`". No sabe qué es una tarea ni cómo se guarda — solo conecta URL + verbo con una función. |
+| Controlador | `controllers/taskController.js` | Lee `req.body`, decide si faltan datos (`400` si no hay `title`), le pide al Modelo que haga el trabajo, y traduce el resultado a un código de estado HTTP (`201`, `404`, `500`...). |
+| Modelo | `models/taskModel.js` | El único archivo que sabe que existe MySQL, que hay una tabla `tasks`, y qué columnas tiene. Aquí vive el único `INSERT`, `SELECT` o `UPDATE` de todo el flujo de tareas. |
+
+Lo mismo aplica en espejo para `userRoutes.js` → `userController.js` →
+`userModel.js`, con login y registro en vez de tareas.
+
+**¿Dónde están las APIs, exactamente?**
+
+No hay un solo lugar — la API es la **suma** de lo que declaran los dos
+archivos de rutas:
+
+| Endpoint | Vive en | Lo resuelve |
+|---|---|---|
+| `POST /api/register`, `POST /api/login` | `routes/userRoutes.js` | `userController.js` |
+| `GET /api/tasks/:userId`, `POST /api/tasks`, `PATCH /api/tasks/:id` | `routes/taskRoutes.js` | `taskController.js` |
+
+`server.js` solo decide bajo qué prefijo se "montan" esos archivos de
+rutas (`/api` y `/api/tasks`) — ábrelo y busca las líneas `app.use(...)`.
+
+**¿Dónde se ve, en el código, que cada capa solo habla con su vecina?**
+
+No hace falta que lo creas — puedes comprobarlo tú mismo revisando los
+`require` de cada archivo:
+
+```
+grep "require(" backend/routes/taskRoutes.js
+grep "require(" backend/controllers/taskController.js
+grep "require(" backend/models/taskModel.js
+```
+
+Vas a ver que `taskRoutes.js` solo importa `taskController` (nunca
+`taskModel`, nunca `mysql2`); que `taskController.js` solo importa
+`taskModel` (nunca `mysql2` directamente); y que solo `taskModel.js`
+importa la conexión a la base de datos (`../db`). Esa ausencia de
+"atajos" en los `require` — no lo que el código *hace*, sino lo que **no**
+importa — es la prueba más directa de que el patrón se está respetando.
+
 ## Errores comunes y solución
 
 | Problema | Causa probable | Solución |
