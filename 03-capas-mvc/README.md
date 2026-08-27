@@ -84,6 +84,59 @@ moderna de MVC en una arquitectura API + SPA, tan válida como la clásica.
 - **Ningún archivo del `frontend/` cambió.** Es la prueba de que separar
   el backend en capas no debería afectar a quien lo consume desde afuera.
 
+## Diagramas de secuencia
+
+Aquí es donde un diagrama de secuencia realmente vale su peso: hace
+**visible** la regla de "cada capa solo habla con su vecina" — algo que
+en prosa se puede afirmar, pero que en un diagrama se nota de inmediato si
+alguien intentara saltarse un paso (como Ruta → Modelo directo, sin pasar
+por el Controlador).
+
+### Crear una tarea
+
+```mermaid
+sequenceDiagram
+    participant N as Navegador (frontend)
+    participant R as routes/taskRoutes.js
+    participant C as controllers/taskController.js
+    participant M as models/taskModel.js
+    participant D as db (MySQL)
+
+    N->>R: POST /api/tasks {userId, title}
+    R->>C: create(req, res)
+    C->>M: taskModel.create(userId, title)
+    M->>D: INSERT INTO tasks (user_id, title, status)
+    D-->>M: insertId
+    M-->>C: {id, userId, title, status: "pending"}
+    C-->>R: res.status(201).json(task)
+    R-->>N: 201 Created {id, title, status: "pending"}
+```
+
+### Completar una tarea
+
+```mermaid
+sequenceDiagram
+    participant N as Navegador (frontend)
+    participant R as routes/taskRoutes.js
+    participant C as controllers/taskController.js
+    participant M as models/taskModel.js
+    participant D as db (MySQL)
+
+    N->>R: PATCH /api/tasks/:id {status: "completed"}
+    R->>C: updateStatus(req, res)
+    C->>M: taskModel.updateStatus(id, status)
+    M->>D: UPDATE tasks SET status = ? WHERE id = ?
+    D-->>M: affectedRows
+    M-->>C: true
+    C-->>R: res.json({id, status})
+    R-->>N: 200 OK {id, status: "completed"}
+```
+
+Nota la forma de "escalera" del diagrama: cada flecha solo baja o sube un
+escalón a la vez — nunca hay una flecha que brinque de `routes` directo a
+`db`, saltándose `controllers` y `models`. Esa figura *es* la arquitectura
+en capas, dibujada.
+
 ## Preguntas frecuentes sobre el código
 
 **¿Qué hace cada capa, concretamente, en esta aplicación?**

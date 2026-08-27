@@ -88,6 +88,54 @@ por HTTP, cada uno en su propio puerto.
   el curso que cliente y servidor están, literalmente, en direcciones
   distintas.
 
+## Diagramas de secuencia
+
+La diferencia con los diagramas de la Práctica 1.5 es el salto nuevo: ya
+no es solo Cliente ↔ Servidor, ahora el servidor también le habla a la
+base de datos como su propio servicio.
+
+### Registro e inicio de sesión
+
+```mermaid
+sequenceDiagram
+    participant N as Navegador (frontend)
+    participant B as backend (Node/Express)
+    participant D as db (MySQL)
+
+    N->>B: POST /api/register {username, password}
+    B->>D: INSERT INTO users (username, password)
+    D-->>B: insertId
+    B-->>N: 201 Created {id, username}
+
+    N->>B: POST /api/login {username, password}
+    B->>D: SELECT id, username FROM users WHERE ...
+    D-->>B: fila encontrada
+    B-->>N: 200 OK {id, username}
+```
+
+### Crear y completar una tarea
+
+```mermaid
+sequenceDiagram
+    participant N as Navegador (frontend)
+    participant B as backend (Node/Express)
+    participant D as db (MySQL)
+
+    N->>B: POST /api/tasks {userId, title}
+    B->>D: INSERT INTO tasks (user_id, title, status)
+    D-->>B: insertId
+    B-->>N: 201 Created {id, title, status: "pending"}
+
+    N->>B: PATCH /api/tasks/:id {status: "completed"}
+    B->>D: UPDATE tasks SET status = ? WHERE id = ?
+    D-->>B: affectedRows
+    B-->>N: 200 OK {id, status: "completed"}
+```
+
+Compáralo con los diagramas de la Práctica 1.5: ahí la "caja" que
+respondía guardaba los datos ella misma; aquí esa caja se abrió en dos —
+el backend ya no es quien guarda nada, solo se lo pide a `db`.
+
 ## Experimento: apagar y encender servicios
 
 Con los 4 contenedores ya corriendo (`docker-compose up --build` en otra
