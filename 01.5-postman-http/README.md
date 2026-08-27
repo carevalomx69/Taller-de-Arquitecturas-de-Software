@@ -2,8 +2,8 @@
 
 ## Objetivo
 
-Ver un `GET` y un `POST` **al descubierto**, es decir, sin la interfaz de la app de por
-medio, para poder contar el modelo mental correcto que el resto del curso da por
+Ver un `GET` y un `POST` **desnudos** — sin la interfaz de la app de por
+medio — para construir el modelo mental que el resto del curso da por
 hecho: qué es exactamente una petición, qué es exactamente una respuesta,
 y cómo se relacionan en una secuencia de ida y vuelta entre un cliente y
 un servidor.
