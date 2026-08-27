@@ -1,0 +1,14 @@
+{
+  "name": "servicio-usuarios",
+  "version": "1.0.0",
+  "description": "Práctica 5: Microservicios -- servicio de usuarios",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "mysql2": "^3.9.0",
+    "cors": "^2.8.5"
+  }
+}
