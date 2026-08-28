@@ -105,7 +105,7 @@ sequenceDiagram
 ```
 
 *(GitHub renderiza estos diagramas automáticamente al ver el archivo en el
-repositorio — no necesitas ninguna herramienta adicional para verlos.)*
+repositorio. No se necesita ninguna herramienta adicional para verlos.)*
 
 ## Qué deberías observar
 
