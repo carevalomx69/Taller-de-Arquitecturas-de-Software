@@ -137,6 +137,13 @@ escalón a la vez — nunca hay una flecha que brinque de `routes` directo a
 `db`, saltándose `controllers` y `models`. Esa figura *es* la arquitectura
 en capas, dibujada.
 
+## Postman (opcional)
+
+Misma colección que en la Práctica 2 -- el contrato de la API no cambió.
+Importa `postman_collection.json` de esta carpeta si quieres correr tú
+mismo las peticiones del diagrama de arriba, en vez de solo leerlas.
+Opcional, no se califica.
+
 ## Preguntas frecuentes sobre el código
 
 **¿Qué hace cada capa, concretamente, en esta aplicación?**
@@ -195,9 +202,11 @@ importa — es la prueba más directa de que el patrón se está respetando.
    claro dónde hacer el cambio?
 2. ¿Por qué crees que `controllers/taskController.js` no importa
    directamente el módulo `mysql2`? ¿Qué se rompería si lo hiciera?
-3. Piensa en el proyecto real de cliente (el de la materia de Ingeniería de
-   Requerimientos del semestre pasado). ¿Su backend debería estar organizado en capas, o todo debería estar
-   en un solo lugar? ¿Qué tan realista (y util) sería aplicar este mismo reacomodo de capas?
+3. Piensa en tu proyecto real de cliente (el de Ingeniería de
+   Requerimientos). ¿Su backend ya está organizado en capas, o todo vive
+   en un solo lugar? ¿Qué tan realista es aplicar este mismo reacomodo ahí,
+   comparado con aplicar Microservicios o CQRS?
+
 ## Entregable
 
 1. Captura de pantalla de la app funcionando en `http://localhost:8080`

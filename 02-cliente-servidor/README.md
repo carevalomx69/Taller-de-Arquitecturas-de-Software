@@ -136,6 +136,14 @@ Compáralo con los diagramas de la Práctica 1.5: ahí la "caja" que
 respondía guardaba los datos ella misma; aquí esa caja se abrió en dos —
 el backend ya no es quien guarda nada, solo se lo pide a `db`.
 
+## Postman (opcional)
+
+Si quieres probar estos mismos flujos con tus propias manos, en vez de
+solo leer los diagramas, importa `postman_collection.json` de esta
+carpeta — apunta al backend en el puerto 4000 y trae las mismas 8
+peticiones que ya usaste en la Práctica 1.5. No es obligatorio ni se
+califica; es un acompañamiento a los diagramas de arriba.
+
 ## Experimento: apagar y encender servicios
 
 Con los 4 contenedores ya corriendo (`docker-compose up --build` en otra

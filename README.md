@@ -102,3 +102,6 @@ siguiente no podrá levantar sus servicios — verás el error
   aunque *cómo* se resuelven cambie radicalmente de una práctica a otra.
 - Mismo entregable: capturas de pantalla + `REFLEXION.md` con las preguntas
   de cada práctica.
+- A partir de la Práctica 2, cada carpeta trae un `postman_collection.json`
+  opcional — casi idéntico entre prácticas, porque el contrato de la API
+  no cambia aunque la arquitectura por dentro sí.

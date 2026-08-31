@@ -137,6 +137,16 @@ tendría que preguntarle a `servicio-usuarios` por HTTP (con el costo de
 latencia y acoplamiento que eso trae), no confiar en que la base de datos
 lo resuelva por él.
 
+## Postman (opcional)
+
+Misma colección de siempre -- aunque ahora el puerto 4000 es el
+API Gateway, no un backend único, el contrato de la API sigue igual.
+Importa `postman_collection.json` de esta carpeta. Opcional, no se
+califica -- pero vale la pena correrla una vez completa, y luego volver a
+correrla después del experimento de abajo (con `servicio-tareas` o
+`servicio-usuarios` apagado) para ver el `502` directamente en Postman,
+no solo en el navegador.
+
 ## Experimento: apagar y encender servicios
 
 Igual que en la Práctica 2, con los 6 contenedores corriendo, prueba

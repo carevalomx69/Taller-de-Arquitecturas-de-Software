@@ -93,6 +93,15 @@ datos" (MySQL).
 - **El comportamiento observable de la app no cambió respecto a la
   Práctica 3.** Mismos endpoints, mismas respuestas.
 
+## Postman (opcional)
+
+Misma colección de siempre -- el contrato de la API sigue sin cambiar,
+aunque por dentro ahora sea un hexágono con adaptadores. Importa
+`postman_collection.json` de esta carpeta para probarlo tú mismo. Opcional,
+no se califica. (Los diagramas de secuencia de esta práctica -- incluyendo
+uno mostrando `test_domain.js` hablándole al dominio sin pasar por ningún
+adaptador -- llegan en la próxima actualización del repo.)
+
 ## Errores comunes y solución
 
 | Problema | Causa probable | Solución |

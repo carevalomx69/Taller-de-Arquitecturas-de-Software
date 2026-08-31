@@ -1,0 +1,132 @@
+{
+  "info": {
+    "name": "Práctica 3 - Capas/MVC (Gestor de Tareas)",
+    "description": "Colección idéntica a la de Cliente-Servidor -- el contrato de la API no cambió, solo la organización interna del backend. Apunta al puerto 4000. Opcional, acompaña a los diagramas de secuencia del README.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:4000",
+      "type": "string"
+    },
+    {
+      "key": "user_id",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "task_id",
+      "value": "1",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Health Check",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/health"
+      }
+    },
+    {
+      "name": "2. Registrar usuario",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"maria\",\n  \"password\": \"1234\"\n}"
+        },
+        "url": "{{base_url}}/api/register"
+      }
+    },
+    {
+      "name": "3. Registrar el mismo usuario otra vez (debe fallar con 409)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"maria\",\n  \"password\": \"1234\"\n}"
+        },
+        "url": "{{base_url}}/api/register"
+      }
+    },
+    {
+      "name": "4. Iniciar sesión",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"maria\",\n  \"password\": \"1234\"\n}"
+        },
+        "url": "{{base_url}}/api/login"
+      }
+    },
+    {
+      "name": "5. Listar tareas del usuario (vacío la primera vez)",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/tasks/{{user_id}}"
+      }
+    },
+    {
+      "name": "6. Crear una tarea",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"userId\": {{user_id}},\n  \"title\": \"Aprender Postman\"\n}"
+        },
+        "url": "{{base_url}}/api/tasks"
+      }
+    },
+    {
+      "name": "7. Listar tareas de nuevo (ya debe aparecer)",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/tasks/{{user_id}}"
+      }
+    },
+    {
+      "name": "8. Completar la tarea",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"status\": \"completed\"\n}"
+        },
+        "url": "{{base_url}}/api/tasks/{{task_id}}"
+      }
+    }
+  ]
+}
