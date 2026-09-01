@@ -18,7 +18,7 @@ cambios. Lo único que cambia es la organización interna del `backend/`:
 
 **Nota sobre MVC:** este proyecto ya no usa vistas renderizadas en el
 servidor (a diferencia del MVC "clásico" con plantillas). La **Vista** es
-el `frontend/` que ya tenías — una SPA ("single page application") que consume la API. El **Modelo**
+el `frontend/` que ya tenías — una SPA que consume la API. El **Modelo**
 vive en `models/` y el **Controlador** en `controllers/`. Es la forma
 moderna de MVC en una arquitectura API + SPA, tan válida como la clásica.
 

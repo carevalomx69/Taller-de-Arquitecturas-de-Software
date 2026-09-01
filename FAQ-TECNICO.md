@@ -183,6 +183,29 @@ funciona.
 
 ---
 
+## 8. "npm no se reconoce como nombre de un cmdlet..." (o "npm: command not found")
+
+**Síntoma:** Al correr `npm install` o `npm test` fuera de Docker (por
+ejemplo, en la Práctica 4, para `test_domain.js`), PowerShell o la
+terminal responde que `npm` no existe.
+
+**Causa:** Node.js no está instalado en tu máquina — hasta ahora, todas
+las prácticas corrían completamente dentro de Docker, así que nunca hizo
+falta. A partir de la Práctica 4, `test_domain.js` se corre a propósito
+**fuera** de Docker, y eso requiere que tu máquina tenga su propio
+`node`/`npm`.
+
+**Solución:**
+1. Instala Node.js (versión LTS) desde https://nodejs.org — o, en
+   Windows, desde PowerShell como administrador: `winget install OpenJS.NodeJS.LTS`
+2. **Cierra y vuelve a abrir tu terminal.** Es el paso que más se
+   olvida — el `PATH` no se actualiza en una ventana que ya estaba
+   abierta antes de instalar.
+3. Confirma con `node --version` y `npm --version` — ambos deben mostrar
+   un número de versión.
+
+---
+
 ## ¿Cómo confirmar que mi máquina puede correr Docker, antes de instalar?
 
 - **Windows:** Administrador de tareas > pestaña Rendimiento > CPU >
