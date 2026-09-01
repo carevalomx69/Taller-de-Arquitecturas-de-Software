@@ -31,7 +31,7 @@ solo la práctica que necesitas.
 | # | Arquitectura | Problema que resuelve | Carpeta | Diapositiva de referencia |
 |---|---|---|---|---|
 | 1 | Monolito | Punto de partida: todo junto para lanzar rápido | [`01-monolito/`](01-monolito/) | "Monolito — en una mirada" |
-| 1.5 | *(intermedio)* Postman y HTTP | Ver un GET/POST "al descubierto" antes de seguir — sin esto, el resto de la unidad da por hecho un modelo mental que muchos alumnos aún no tienen | [`01.5-postman-http/`](01.5-postman-http/) | "APIs" / "Cómo se ve una API" |
+| 1.5 | *(intermedio)* Postman y HTTP | Ver un GET/POST "al descubierto" antes de seguir — sin esto, el resto de la unidad da por hecho un modelo mental tal vez incompleto | [`01.5-postman-http/`](01.5-postman-http/) | "APIs" / "Cómo se ve una API" |
 | 2 | Cliente-Servidor | Varios usuarios necesitan acceder a los mismos datos | [`02-cliente-servidor/`](02-cliente-servidor/) | "Cliente-Servidor — en una mirada" |
 | 3 | Capas / MVC | El servidor mezcla presentación, lógica y datos | [`03-capas-mvc/`](03-capas-mvc/) | "MVC — en una mirada" |
 | 4 | Hexagonal | Probar la lógica exige levantar toda la infraestructura | [`04-hexagonal/`](04-hexagonal/) | "Hexagonal — en una mirada" |
