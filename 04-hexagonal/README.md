@@ -31,13 +31,19 @@ datos" (MySQL).
 - Práctica 3 completada.
 - Haber revisado la diapositiva **"Patrón 'Hexagonal' (Puertos y
   adaptadores)"**.
-- **Node.js instalado en tu propia máquina** (no solo en Docker) —
-  descárgalo de https://nodejs.org (versión LTS). Esta es la **primera**
-  práctica del curso que lo necesita: `test_domain.js` se corre a
-  propósito **fuera** de Docker, así que tu máquina necesita su propio
-  `node`/`npm`. Si acabas de instalarlo, cierra y vuelve a abrir tu
-  terminal antes de continuar — el `PATH` no se actualiza en una ventana
-  que ya estaba abierta.
+- **Node.js instalado en tu propia máquina** (no solo en Docker). Esta es
+  la **primera** práctica del curso que lo necesita: `test_domain.js` se
+  corre a propósito **fuera** de Docker, así que tu máquina necesita su
+  propio `node`/`npm`. Dos formas de instalarlo (Windows):
+  - **Recomendado, más rápido:** en PowerShell como administrador,
+    ```powershell
+    winget install OpenJS.NodeJS.LTS
+    ```
+  - O descárgalo directo desde https://nodejs.org (versión LTS).
+
+  En ambos casos, **cierra y vuelve a abrir tu terminal** antes de
+  continuar — el `PATH` no se actualiza en una ventana que ya estaba
+  abierta antes de instalar.
 
 ## Estructura de archivos
 
@@ -114,6 +120,7 @@ adaptador -- llegan en la próxima actualización del repo.)
 | Problema | Causa probable | Solución |
 |---|---|---|
 | `npm no se reconoce...` / `npm: command not found` | Node.js no está instalado en tu máquina (esta es la primera práctica que lo necesita fuera de Docker) | Ver [`FAQ-TECNICO.md`](../FAQ-TECNICO.md#8-npm-no-se-reconoce-como-nombre-de-un-cmdlet-o-npm-command-not-found) |
+| `npm : ... la ejecución de scripts está deshabilitada` (PowerShell) | Política de ejecución de scripts de Windows, no un problema de Node.js | Ver [`FAQ-TECNICO.md`](../FAQ-TECNICO.md#9-npm--no-se-puede-cargar-el-archivo--porque-la-ejecución-de-scripts-está-deshabilitada-powershell) |
 | `node test_domain.js` no corre / `Cannot find module` | No corriste `npm install` primero | Ejecuta `npm install` dentro de `backend/` antes de las pruebas |
 | Los mismos errores de Docker de prácticas anteriores | Misma causa que antes | Revisa el [`FAQ-TECNICO.md`](../FAQ-TECNICO.md) |
 

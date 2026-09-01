@@ -196,13 +196,47 @@ falta. A partir de la Práctica 4, `test_domain.js` se corre a propósito
 `node`/`npm`.
 
 **Solución:**
-1. Instala Node.js (versión LTS) desde https://nodejs.org — o, en
-   Windows, desde PowerShell como administrador: `winget install OpenJS.NodeJS.LTS`
+1. Instala Node.js (versión LTS). En Windows, la forma más rápida es
+   desde PowerShell como administrador:
+   ```powershell
+   winget install OpenJS.NodeJS.LTS
+   ```
+   También puedes descargarlo directo desde https://nodejs.org si
+   prefieres el instalador tradicional.
 2. **Cierra y vuelve a abrir tu terminal.** Es el paso que más se
    olvida — el `PATH` no se actualiza en una ventana que ya estaba
    abierta antes de instalar.
 3. Confirma con `node --version` y `npm --version` — ambos deben mostrar
    un número de versión.
+
+---
+
+## 9. "npm : No se puede cargar el archivo ... porque la ejecución de scripts está deshabilitada" (PowerShell)
+
+**Síntoma:** `node --version` funciona, pero `npm --version` (o
+`npm install`) falla con un error de `PSSecurityException` /
+`UnauthorizedAccess`, mencionando la política de ejecución de scripts.
+
+**Causa:** En Windows, `npm` se apoya en un script de PowerShell
+(`npm.ps1`). Por defecto, PowerShell bloquea ejecutar scripts sin firmar
+— y esto no tiene nada que ver con Node.js en sí, es una política de
+seguridad general de Windows.
+
+**Solución (funciona en la mayoría de las computadoras personales, sin
+necesitar ser administrador):**
+```powershell
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+```
+Confirma con `Y` cuando lo pida, y vuelve a intentar `npm --version`.
+
+**Si tu máquina es institucional y ese comando falla** (a veces la
+política está fija por una directiva de grupo), evita el problema por
+completo sin tocar ninguna configuración: usa `npm.cmd` en vez de `npm`
+para cada comando de esta práctica —
+```powershell
+npm.cmd install
+npm.cmd test
+```
 
 ---
 
