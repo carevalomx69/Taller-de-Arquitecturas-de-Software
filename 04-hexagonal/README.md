@@ -106,6 +106,70 @@ datos" (MySQL).
 - **El comportamiento observable de la app no cambió respecto a la
   Práctica 3.** Mismos endpoints, mismas respuestas.
 
+## Diagramas de secuencia
+
+Aquí vale la pena ver **dos** diagramas, no uno — porque la razón de ser
+de esta práctica es, precisamente, que el mismo dominio se puede alcanzar
+por dos caminos completamente distintos.
+
+### Camino 1: con Docker, a través de los adaptadores reales
+
+```mermaid
+sequenceDiagram
+    participant N as Navegador (frontend)
+    participant A as apiAdapter.js
+    participant D as taskDomain.js
+    participant R as dbAdapter.js
+    participant DB as db (MySQL)
+
+    N->>A: POST /api/tasks {userId, title}
+    A->>D: taskDomain.create(repo, userId, title)
+    D->>R: repo.createTask(userId, title)
+    R->>DB: INSERT INTO tasks (user_id, title, status)
+    DB-->>R: insertId
+    R-->>D: {id, userId, title, status: "pending"}
+    D-->>A: {data: task, status: 201}
+    A-->>N: 201 Created {id, title, status: "pending"}
+
+    N->>A: PATCH /api/tasks/:id {status: "completed"}
+    A->>D: taskDomain.updateStatus(repo, id, status)
+    D->>R: repo.updateTaskStatus(id, status)
+    R->>DB: UPDATE tasks SET status = ? WHERE id = ?
+    DB-->>R: affectedRows
+    R-->>D: true
+    D-->>A: {data: {id, status}, status: 200}
+    A-->>N: 200 OK {id, status: "completed"}
+```
+
+Nota los dos escalones extra respecto al diagrama de Capas de la
+Práctica 3: aquí `A` (`apiAdapter.js`) y `R` (`dbAdapter.js`) son
+**adaptadores** que traducen — no son simplemente "la siguiente capa",
+son las piezas reemplazables por diseño.
+
+### Camino 2: sin Docker, con `test_domain.js`
+
+```mermaid
+sequenceDiagram
+    participant T as test_domain.js
+    participant D as taskDomain.js
+    participant F as adaptador falso (en memoria)
+
+    T->>D: taskDomain.create(fakeRepo, 1, "Probar hexagonal")
+    D->>F: fakeRepo.createTask(1, "Probar hexagonal")
+    Note over F: arreglo de JavaScript en memoria -- sin SQL, sin Docker
+    F-->>D: {id: 1, userId: 1, title: "...", status: "pending"}
+    D-->>T: {data: task, status: 201}
+    Note over T: assertEqual(result.status, 201, "crear una tarea regresa 201")
+```
+
+**El detalle que hace valioso este segundo diagrama:** `taskDomain.js` es
+literalmente el mismo participante `D` en ambos diagramas — el mismo
+archivo, sin cambiar una línea. Lo único que cambió fue quién estaba del
+otro lado del puerto: en el Camino 1, `dbAdapter.js` hablando con MySQL de
+verdad; en el Camino 2, un arreglo de JavaScript fingiendo ser una base de
+datos. El dominio nunca se enteró de la diferencia — y esa es, en una
+sola imagen, toda la idea de Hexagonal.
+
 ## Preguntas frecuentes sobre el código
 
 **¿A qué nos referimos exactamente como "el dominio"?**
@@ -202,9 +266,7 @@ hablando con un traductor distinto.
 Misma colección de siempre -- el contrato de la API sigue sin cambiar,
 aunque por dentro ahora sea un hexágono con adaptadores. Importa
 `postman_collection.json` de esta carpeta para probarlo tú mismo. Opcional,
-no se califica. (Los diagramas de secuencia de esta práctica -- incluyendo
-uno mostrando `test_domain.js` hablándole al dominio sin pasar por ningún
-adaptador -- llegan en la próxima actualización del repo.)
+no se califica.
 
 ## Errores comunes y solución
 
