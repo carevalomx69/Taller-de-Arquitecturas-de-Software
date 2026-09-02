@@ -19,31 +19,56 @@ function createApiAdapter(repo) {
   });
 
   app.post('/api/register', async (req, res) => {
-    const { username, password } = req.body;
-    const result = await userDomain.register(repo, username, password);
-    respond(res, result);
+    try {
+      const { username, password } = req.body;
+      const result = await userDomain.register(repo, username, password);
+      respond(res, result);
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: 'Unexpected error' });
+    }
   });
 
   app.post('/api/login', async (req, res) => {
-    const { username, password } = req.body;
-    const result = await userDomain.login(repo, username, password);
-    respond(res, result);
+    try {
+      const { username, password } = req.body;
+      const result = await userDomain.login(repo, username, password);
+      respond(res, result);
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: 'Unexpected error' });
+    }
   });
 
   app.get('/api/tasks/:userId', async (req, res) => {
-    const result = await taskDomain.list(repo, req.params.userId);
-    respond(res, result);
+    try {
+      const result = await taskDomain.list(repo, req.params.userId);
+      respond(res, result);
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: 'Unexpected error' });
+    }
   });
 
   app.post('/api/tasks', async (req, res) => {
-    const { userId, title } = req.body;
-    const result = await taskDomain.create(repo, userId, title);
-    respond(res, result);
+    try {
+      const { userId, title } = req.body;
+      const result = await taskDomain.create(repo, userId, title);
+      respond(res, result);
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: 'Unexpected error' });
+    }
   });
 
   app.patch('/api/tasks/:id', async (req, res) => {
-    const result = await taskDomain.updateStatus(repo, req.params.id, req.body.status);
-    respond(res, result);
+    try {
+      const result = await taskDomain.updateStatus(repo, req.params.id, req.body.status);
+      respond(res, result);
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: 'Unexpected error' });
+    }
   });
 
   return app;

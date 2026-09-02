@@ -106,6 +106,97 @@ datos" (MySQL).
 - **El comportamiento observable de la app no cambió respecto a la
   Práctica 3.** Mismos endpoints, mismas respuestas.
 
+## Preguntas frecuentes sobre el código
+
+**¿A qué nos referimos exactamente como "el dominio"?**
+
+Son, muy concretamente, dos archivos: `domain/userDomain.js` y
+`domain/taskDomain.js` — las funciones que ya viste pasar sus 10 pruebas
+en `test_domain.js`. El dominio es el conjunto de **reglas del negocio**,
+expresadas en código, sin ninguna referencia a cómo se exponen (HTTP,
+Express) ni a dónde se guardan (MySQL, memoria). Es la respuesta a
+preguntas como "¿qué significa registrar un usuario?" (que no exista ya
+ese username) o "¿qué significa completar una tarea?" (que exista, y que
+el nuevo estado sea válido). Esas son decisiones de **negocio**, no de
+tecnología — por eso viven separadas.
+
+La prueba más clara de que el dominio de verdad no sabe nada de
+tecnología: recibe un `repo` genérico y le pide cosas
+(`repo.updateTaskStatus(...)`) sin saber si ese `repo` habla con MySQL de
+verdad o es el arreglo falso en memoria de `test_domain.js`.
+
+**¿Cuál es el papel de Node.js en todo esto?**
+
+Aquí es fácil confundirse, así que vale la pena decirlo con todas sus
+letras: **Node.js no es parte del patrón Hexagonal**. Es simplemente el
+motor que ejecuta JavaScript fuera de un navegador — el programa que leyó
+`test_domain.js`, entendió los `require(...)`, corrió las funciones línea
+por línea, y te imprimió el resultado en la terminal. Node.js es el
+terreno común donde corre **todo**: tanto el dominio puro como los
+adaptadores con Express y MySQL. La aislación de la que habla Hexagonal no
+es "aislar del lenguaje o del motor que lo ejecuta" — sería imposible, y
+no tendría sentido. Lo que se aísla es la infraestructura que sí podría
+cambiar algún día (el framework web, el motor de base de datos). Node.js,
+en cambio, es la base fija sobre la que se construye absolutamente todo,
+incluidas las pruebas.
+
+**¿"Modelo" (Práctica 3) y "Dominio" (Práctica 4) son lo mismo?**
+
+No, y es una confusión muy razonable de tener porque ambos nombres suenan
+a "la entidad de negocio". Pero comparando el código real, el mapeo es
+distinto de lo que el nombre sugiere:
+
+| Capas/MVC (Práctica 3) | Hexagonal (Práctica 4) |
+|---|---|
+| `models/taskModel.js` — solo SQL, sin reglas de negocio | `adapters/dbAdapter.js` — solo SQL, sin reglas de negocio |
+| `controllers/taskController.js` — reglas de negocio **y** manejo de HTTP, mezclados en el mismo archivo | Se separa en dos: las reglas de negocio se van a `domain/taskDomain.js`; el manejo de HTTP se va a `adapters/apiAdapter.js` |
+
+Es decir: lo que más se parece al **Modelo** de Capas es, de hecho, el
+**`dbAdapter`** de Hexagonal — ambos son "el único lugar que sabe SQL, sin
+opinar de reglas". El **Dominio**, en cambio, es la mitad "reglas de
+negocio" de lo que antes era el Controlador, ahora separada de su otra
+mitad ("hablar HTTP"). Compara tú mismo `controllers/taskController.js`
+de la Práctica 3 contra `domain/taskDomain.js` de esta práctica — vas a
+encontrar casi la misma validación de `status`, casi el mismo `404`, solo
+que ya sin ningún `req`/`res` de por medio.
+
+**¿Qué es, exactamente, un adaptador?**
+
+Un adaptador es el archivo que **sí** conoce una tecnología concreta, y
+cuyo único trabajo es traducir entre "el lenguaje" de esa tecnología y el
+contrato abstracto que el dominio espera (el **puerto**). En este
+proyecto hay dos:
+
+- `adapters/apiAdapter.js` — el único archivo que importa `express`.
+  Traduce en ambas direcciones: toma una petición HTTP (`req.body`) y la
+  convierte en argumentos sencillos para el dominio (`username`,
+  `password`); y toma la respuesta del dominio (`{data, status}` o
+  `{error, status}`) y la convierte en una respuesta HTTP real
+  (`res.status(...).json(...)`).
+- `adapters/dbAdapter.js` — el único archivo que importa `mysql2`. Traduce
+  las llamadas abstractas que el dominio hace (`repo.createUser(...)`) en
+  consultas SQL reales, y traduce los errores específicos de MySQL
+  (`ER_DUP_ENTRY`) a un código genérico (`DUPLICATE_USERNAME`) que el
+  dominio pueda entender sin saber que MySQL existe.
+
+La forma más sencilla de reconocerlos en cualquier proyecto: **un
+adaptador es el único lugar donde aparece el `require()` de la tecnología
+concreta** (`express`, `mysql2`, lo que sea) — el dominio jamás los
+importa.
+
+Una analogía que suele ayudar: el adaptador es como un **traductor en una
+reunión diplomática**. El dominio "habla" reglas de negocio; la
+tecnología "habla" HTTP o SQL. El traductor convierte de un idioma al
+otro, pero nunca opina ni decide nada por su cuenta — esa parte (las
+reglas) le corresponde al dominio, no a él.
+
+Y aquí se cierra el círculo con `test_domain.js`: aunque no vive en la
+carpeta `adapters/`, cumple exactamente el mismo rol — es un **tercer
+adaptador**, uno falso, que traduce las llamadas del dominio hacia
+arreglos de JavaScript en memoria en vez de hacia MySQL. Por eso las
+pruebas corren igual de bien sin Docker: el dominio nunca supo que estaba
+hablando con un traductor distinto.
+
 ## Postman (opcional)
 
 Misma colección de siempre -- el contrato de la API sigue sin cambiar,
