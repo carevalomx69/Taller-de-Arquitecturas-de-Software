@@ -137,15 +137,71 @@ tendría que preguntarle a `servicio-usuarios` por HTTP (con el costo de
 latencia y acoplamiento que eso trae), no confiar en que la base de datos
 lo resuelva por él.
 
-## Postman (opcional)
+## Diagramas de secuencia
 
-Misma colección de siempre -- aunque ahora el puerto 4000 es el
-API Gateway, no un backend único, el contrato de la API sigue igual.
-Importa `postman_collection.json` de esta carpeta. Opcional, no se
-califica -- pero vale la pena correrla una vez completa, y luego volver a
-correrla después del experimento de abajo (con `servicio-tareas` o
-`servicio-usuarios` apagado) para ver el `502` directamente en Postman,
-no solo en el navegador.
+Aquí vale la pena ver **dos** diagramas, no uno — porque lo interesante de
+esta práctica no es solo que hay dos servicios, sino que el Gateway decide
+a cuál le habla según la ruta, y qué pasa cuando uno de los dos no
+contesta.
+
+### Diagrama 1: el Gateway enrutando según la ruta
+
+```mermaid
+sequenceDiagram
+    participant N as Navegador (frontend)
+    participant G as api-gateway (nginx)
+    participant SU as servicio-usuarios
+    participant ST as servicio-tareas
+    participant DB as db (MySQL)
+
+    N->>G: POST /api/login {username, password}
+    Note over G: nginx.conf: location /api/login → servicio-usuarios
+    G->>SU: proxy_pass
+    SU->>DB: SELECT ... FROM users WHERE username = ? AND password = ?
+    DB-->>SU: {id, username}
+    SU-->>G: 200 OK {id, username}
+    G-->>N: 200 OK {id, username}
+
+    N->>G: POST /api/tasks {userId, title}
+    Note over G: nginx.conf: location /api/tasks → servicio-tareas
+    G->>ST: proxy_pass
+    ST->>DB: INSERT INTO tasks (user_id, title, status)
+    DB-->>ST: insertId
+    ST-->>G: 201 Created {id, userId, title, status: "pending"}
+    G-->>N: 201 Created {id, userId, title, status: "pending"}
+```
+
+Fíjate que el navegador le habla exactamente igual al Gateway las dos
+veces (mismo host, mismo puerto `4000`) — la única diferencia es la ruta
+(`/api/login` vs. `/api/tasks`), y es justo esa ruta la que `nginx.conf`
+usa para decidir a cuál de los dos servicios reenviar la petición. El
+navegador nunca se entera de que hay dos procesos distintos detrás.
+
+### Diagrama 2: el `502 Bad Gateway` al apagar un servicio a medias
+
+```mermaid
+sequenceDiagram
+    participant N as Navegador (frontend)
+    participant G as api-gateway (nginx)
+    participant ST as servicio-tareas
+
+    Note over ST: docker-compose stop servicio-tareas
+    N->>G: GET /api/tasks/3
+    Note over G: nginx.conf: location /api/tasks → servicio-tareas
+    G->>ST: proxy_pass
+    Note over ST: contenedor apagado -- no hay quien conteste
+    ST--xG: (conexión rechazada / sin respuesta)
+    G-->>N: 502 Bad Gateway
+    Note over N: mientras tanto, POST /api/login sigue respondiendo 200 OK --<br/>servicio-usuarios nunca se enteró de que su vecino cayó
+```
+
+Este segundo diagrama es literalmente lo que vas a reproducir tú mismo en
+el experimento de la siguiente sección — antes de hacerlo con tus propias
+manos, vale la pena verlo una vez "de cuerpo completo": el Gateway sí
+sabe a quién le tenía que reenviar la petición, pero al no recibir
+respuesta de ese contenedor, no tiene más remedio que devolverle al
+navegador un `502` — la forma en que Nginx dice "encontré a quién
+preguntarle, pero no me contestó".
 
 ## Experimento: apagar y encender servicios
 
