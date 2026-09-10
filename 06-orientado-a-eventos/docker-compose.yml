@@ -1,0 +1,107 @@
+version: '3.8'
+
+services:
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: taskdb
+      MYSQL_USER: taskuser
+      MYSQL_PASSWORD: taskpass
+    volumes:
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "3307:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-prootpass"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  db-admin:
+    image: phpmyadmin:latest
+    environment:
+      PMA_HOST: db
+      PMA_USER: root
+      PMA_PASSWORD: rootpass
+    ports:
+      - "8081:80"
+    depends_on:
+      - db
+
+  # ========== NUEVO en esta práctica ==========
+  # El broker de eventos. Igual que "db" es la pieza compartida de
+  # persistencia entre servicios, "rabbitmq" es la pieza compartida de
+  # comunicación asíncrona. Exponemos su interfaz de administración
+  # (15672) a tu máquina a propósito -- a diferencia de servicio-usuarios
+  # y servicio-tareas, aquí SÍ quieres verla desde el navegador para
+  # observar colas y mensajes en vivo durante el experimento. El puerto
+  # AMQP (5672, el que usan los servicios entre sí) NO se expone al host,
+  # exactamente con la misma lógica de "solo lo que el navegador necesita
+  # tocar sale al exterior" que ya viste en la Práctica 5.
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    ports:
+      - "15672:15672"
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  servicio-usuarios:
+    build: ./servicio-usuarios
+    environment:
+      DB_HOST: db
+      DB_USER: taskuser
+      DB_PASSWORD: taskpass
+      DB_NAME: taskdb
+    depends_on:
+      db:
+        condition: service_healthy
+    # Sin "ports" -- sigue oculto detrás del api-gateway, igual que en la
+    # Práctica 5. Esta práctica no cambia nada aquí.
+
+  servicio-tareas:
+    build: ./servicio-tareas
+    environment:
+      DB_HOST: db
+      DB_USER: taskuser
+      DB_PASSWORD: taskpass
+      DB_NAME: taskdb
+      RABBITMQ_URL: amqp://rabbitmq
+    depends_on:
+      db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    # Tampoco expone puerto al host.
+
+  # ========== NUEVO en esta práctica ==========
+  # No tiene "depends_on: db" -- a propósito. servicio-auditoria no habla
+  # con MySQL en absoluto, solo con RabbitMQ. Fíjate que tampoco expone
+  # ningún puerto al host: el único que le puede hablar es el api-gateway,
+  # igual que a servicio-usuarios y servicio-tareas.
+  servicio-auditoria:
+    build: ./servicio-auditoria
+    environment:
+      RABBITMQ_URL: amqp://rabbitmq
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+
+  api-gateway:
+    build: ./api-gateway
+    ports:
+      - "4000:80"
+    depends_on:
+      - servicio-usuarios
+      - servicio-tareas
+      - servicio-auditoria
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "8080:80"
+    depends_on:
+      - api-gateway
