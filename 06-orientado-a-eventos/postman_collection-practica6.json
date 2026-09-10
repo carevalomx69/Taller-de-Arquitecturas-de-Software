@@ -1,0 +1,79 @@
+{
+  "info": {
+    "name": "Práctica 6 - Orientado a Eventos (Gestor de Tareas)",
+    "description": "Colección idéntica a la de Microservicios (el contrato de la API no cambió) + UNA petición nueva al final: GET /api/audit, para consultar lo que servicio-auditoria ha escuchado. Apunta al puerto 4000 -- asegúrate de tener 'docker-compose up' corriendo en 06-orientado-a-eventos/ antes de usarla. Tip: corre la #6 (Crear una tarea) y luego la #9 (Ver la bitácora) para ver el evento recién llegado.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url", "value": "http://localhost:4000", "type": "string" },
+    { "key": "user_id", "value": "1", "type": "string" },
+    { "key": "task_id", "value": "1", "type": "string" }
+  ],
+  "item": [
+    {
+      "name": "1. Health Check",
+      "request": { "method": "GET", "url": "{{base_url}}/api/health" }
+    },
+    {
+      "name": "2. Registrar usuario",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\n  \"username\": \"maria\",\n  \"password\": \"1234\"\n}" },
+        "url": "{{base_url}}/api/register"
+      }
+    },
+    {
+      "name": "3. Registrar el mismo usuario otra vez (debe fallar con 409)",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\n  \"username\": \"maria\",\n  \"password\": \"1234\"\n}" },
+        "url": "{{base_url}}/api/register"
+      }
+    },
+    {
+      "name": "4. Iniciar sesión",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\n  \"username\": \"maria\",\n  \"password\": \"1234\"\n}" },
+        "url": "{{base_url}}/api/login"
+      }
+    },
+    {
+      "name": "5. Listar tareas del usuario (vacío la primera vez)",
+      "request": { "method": "GET", "url": "{{base_url}}/api/tasks/{{user_id}}" }
+    },
+    {
+      "name": "6. Crear una tarea",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\n  \"userId\": {{user_id}},\n  \"title\": \"Aprender Postman\"\n}" },
+        "url": "{{base_url}}/api/tasks"
+      }
+    },
+    {
+      "name": "7. Listar tareas de nuevo (ya debe aparecer)",
+      "request": { "method": "GET", "url": "{{base_url}}/api/tasks/{{user_id}}" }
+    },
+    {
+      "name": "8. Completar la tarea",
+      "request": {
+        "method": "PATCH",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\n  \"status\": \"completed\"\n}" },
+        "url": "{{base_url}}/api/tasks/{{task_id}}"
+      }
+    },
+    {
+      "name": "9. NUEVO -- Ver la bitácora de servicio-auditoria",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/audit",
+        "description": "A diferencia de las peticiones 1-8, esta no le pertenece a servicio-usuarios ni a servicio-tareas -- va a servicio-auditoria, que solo escucha eventos por RabbitMQ y los deja consultar aqui. Corre esta peticion justo despues de la #6 y de la #8 para ver aparecer 'tarea.creada' y 'tarea.completada' en el arreglo, con la hora en que servicio-auditoria los recibio (campo 'recibidoEn')."
+      }
+    }
+  ]
+}
