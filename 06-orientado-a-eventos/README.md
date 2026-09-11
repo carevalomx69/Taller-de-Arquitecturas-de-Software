@@ -144,6 +144,64 @@ tumbar la petición HTTP. La regla de diseño detrás de esto: el evento es
 "avisar a quien le interese", nunca una condición para que la operación de
 negocio exista.
 
+## Ventajas de la arquitectura
+
+Vale la pena detenerse aquí antes de ver los diagramas, porque es fácil
+quedarse con la idea de "ya vi que es asíncrono" sin ver *para qué* sirve
+eso en un sistema real. Esta práctica, a propósito, solo construye un
+productor (`servicio-tareas`) y un consumidor (`servicio-auditoria`) —
+pero la arquitectura brilla de verdad cuando imaginas varios consumidores
+a la vez.
+
+**No todo se volvió asíncrono — solo una parte, y ahí está la clave.** El
+gateway sigue hablándole a `servicio-tareas` de forma síncrona (si lo
+apagas, sigues obteniendo error, igual que en la Práctica 5). Lo que
+cambió es únicamente la comunicación *hacia adelante*, del servicio hacia
+quien reacciona a lo que hizo. La pregunta que conviene hacerse para
+decidir si algo debe ser una llamada síncrona o un evento es: **¿quien
+llama necesita la respuesta para poder terminar su propio trabajo, o solo
+está avisando de pasada?** Guardar la tarea en MySQL es lo primero
+(`servicio-tareas` sí necesita saber si funcionó); avisarle a auditoría es
+lo segundo (a `servicio-tareas` no le cambia en nada el resultado).
+
+**La velocidad de la respuesta al usuario deja de depender de la
+velocidad del trabajo secundario.** Imagina que en vez de un solo
+consumidor tuvieras tres: uno de auditoría, uno que manda un correo de
+felicitación, y uno que actualiza un dashboard de estadísticas. Si
+`servicio-tareas` tuviera que llamarlos uno por uno y esperar (como en
+Microservicios), el usuario se quedaría esperando a que el más lento de
+los tres responda —y el correo suele ser el más lento— solo para marcar
+una tarea como completada. Con eventos, el usuario recibe su `201`
+apenas se guarda en MySQL, y los tres consumidores procesan en paralelo,
+a su propio ritmo, sin que a él le importe.
+
+**Agregar (o quitar) quién reacciona a un evento no toca al productor.**
+El día que quieras agregar ese servicio de correos, solo escribes el
+consumidor nuevo y lo suscribes al exchange `eventos_tareas` -- no tocas
+ni un archivo de `servicio-tareas`, no lo vuelves a desplegar, y no
+corres el riesgo de que un bug en el código del correo tumbe la creación
+de tareas. Eso es particularmente valioso cuando esos consumidores los
+construyen equipos distintos dentro de una organización grande: el equipo
+de facturación no depende de que el equipo de tareas les dé una API a la
+medida ni coordine un despliegue conjunto con ellos.
+
+**Nadie se queda sin su evento por una caída parcial.** Ya lo viste en el
+experimento: si el servicio de correos se cayera por mantenimiento una
+hora, con llamadas síncronas esos correos simplemente no se mandarían (o,
+peor, tumbarían la creación de tareas si el diseño los acopla mal). Con
+eventos, se acumulan en su cola durante esa hora, y en cuanto el servicio
+vuelve, los procesa todos en orden -- nadie se queda sin su correo, solo
+lo recibe tarde.
+
+**El trade-off, para que no se sienta gratis:** todo esto se gana a
+cambio de *consistencia inmediata*. En Microservicios, cuando el
+navegador recibe su `201`, sabe con certeza que todo lo relacionado con
+esa tarea ya pasó. Aquí, cuando el navegador recibe su `201`, la tarea ya
+existe -- pero la auditoría (o cualquier otro consumidor) podría no haber
+procesado el evento todavía, aunque sea por unos milisegundos, como se ve
+en el pico del panel de RabbitMQ. Eso se llama **consistencia eventual**,
+y es la idea que van a retomar más a fondo en CQRS.
+
 ## Diagramas de secuencia
 
 ### Diagrama 1: flujo normal — publicar no es lo mismo que esperar respuesta
