@@ -149,11 +149,11 @@ negocio exista.
 Vale la pena detenerse aquí antes de ver los diagramas, porque es fácil
 quedarse con la idea de "ya vi que es asíncrono" sin ver *para qué* sirve
 eso en un sistema real. Esta práctica, a propósito, solo construye un
-productor (`servicio-tareas`) y un consumidor (`servicio-auditoria`) —
-pero la arquitectura brilla de verdad cuando imaginas varios consumidores
+productor (`servicio-tareas`) y un consumidor (`servicio-auditoria`), pero
+la arquitectura es muy util cuando imaginas varios consumidores
 a la vez.
 
-**No todo se volvió asíncrono — solo una parte, y ahí está la clave.** El
+**No todo se volvió asíncrono, solo una parte, y ahí está la clave.** El
 gateway sigue hablándole a `servicio-tareas` de forma síncrona (si lo
 apagas, sigues obteniendo error, igual que en la Práctica 5). Lo que
 cambió es únicamente la comunicación *hacia adelante*, del servicio hacia
@@ -193,14 +193,14 @@ eventos, se acumulan en su cola durante esa hora, y en cuanto el servicio
 vuelve, los procesa todos en orden -- nadie se queda sin su correo, solo
 lo recibe tarde.
 
-**El trade-off, para que no se sienta gratis:** todo esto se gana a
+**El trade-off: no es gratis:** todo esto se gana a
 cambio de *consistencia inmediata*. En Microservicios, cuando el
 navegador recibe su `201`, sabe con certeza que todo lo relacionado con
 esa tarea ya pasó. Aquí, cuando el navegador recibe su `201`, la tarea ya
 existe -- pero la auditoría (o cualquier otro consumidor) podría no haber
-procesado el evento todavía, aunque sea por unos milisegundos, como se ve
+procesado el evento todavía, **aunque sea por unos milisegundos**, como se ve
 en el pico del panel de RabbitMQ. Eso se llama **consistencia eventual**,
-y es la idea que van a retomar más a fondo en CQRS.
+y es la idea que se va a retomar más a fondo en la practica CQRS.
 
 ## Diagramas de secuencia
 
