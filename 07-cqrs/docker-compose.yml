@@ -33,7 +33,7 @@ services:
   # segundo consumidor (servicio-consultas) se suscribe a él, sin que
   # rabbitmq ni servicio-tareas necesiten ningún cambio para permitirlo.
   rabbitmq:
-    image: rabbitmq:3-management-alpine
+    image: rabbitmq:3-management
     ports:
       - "15672:15672"
     healthcheck:
