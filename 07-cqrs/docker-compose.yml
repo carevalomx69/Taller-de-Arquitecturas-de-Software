@@ -41,6 +41,8 @@ services:
       interval: 5s
       timeout: 5s
       retries: 10
+    environment: 
+      RABBITMQ_ERLANG_COOKIE: "taller-arquitecturas-cookie-fijo"
 
   # ========== NUEVO en esta práctica ==========
   # La base de datos del lado de LECTURA -- completamente separada de "db".
