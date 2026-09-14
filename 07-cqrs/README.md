@@ -94,12 +94,35 @@ productor se entere de que ahora son dos en vez de uno.
 ## Instrucciones paso a paso
 
 1. Abre una terminal en esta carpeta (`07-cqrs/`).
-2. Levanta todo:
+2. Levanta todo en **tres pasos**, no en uno solo -- esto evita un
+   problema real que encontramos al probar esta práctica: si Docker
+   construye las 5 imágenes de Node y arranca los 10 contenedores todos
+   al mismo tiempo, RabbitMQ puede perder una carrera interna contra sí
+   mismo por falta de CPU disponible en ese instante y truena al arrancar
+   (ver "Errores comunes" más abajo si te pasa de todas formas):
    ```
-   docker-compose up --build
+   docker-compose build
+   docker-compose up -d rabbitmq
+   docker-compose up -d
    ```
+   El primer comando construye todo sin arrancar nada -- la parte que más
+   CPU consume. El segundo levanta *solo* RabbitMQ y le da un momento para
+   estabilizarse sin nadie más compitiendo por recursos. El tercero
+   levanta el resto -- para entonces RabbitMQ ya debería estar sano, así
+   que los servicios que dependen de él (`servicio-tareas`,
+   `servicio-consultas`, `servicio-auditoria`, `api-gateway`) arrancan sin
+   problema.
+
    Vas a ver dos contenedores de MySQL arrancar (`db` y `db-lectura`) --
-   es esperado, son dos bases de datos independientes.
+   es esperado, son dos bases de datos independientes. En el tercer
+   comando (`docker-compose up -d`), es normal que por unos segundos
+   (hasta medio minuto, sobre todo en Windows con WSL2) veas a `db` y
+   `db-lectura` en estado `Waiting` mientras terminan de inicializarse
+   por primera vez -- no es el mismo problema de RabbitMQ, es a
+   `condition: service_healthy` haciendo su trabajo: no deja arrancar a
+   `servicio-tareas` ni a `servicio-consultas` hasta que su base de datos
+   esté de verdad lista, no solo "prendida". En cuanto termina, todo se
+   empareja solo.
 3. Abre `http://localhost:8080` y usa la app normalmente -- para el
    usuario, nada se ve distinto.
 4. Abre `http://localhost:8081` (phpMyAdmin de `db`, la de escritura) y
@@ -241,6 +264,7 @@ CQRS, puede no reflejar una escritura hecha apenas un instante antes.
 | `GET /api/tasks/:userId` responde `502` todo el tiempo, no solo al experimentar | `servicio-consultas` o `db-lectura` no terminaron de arrancar | Espera unos segundos y refresca; revisa `docker-compose logs servicio-consultas` |
 | Creas una tarea y no aparece de inmediato en la lista | Consistencia eventual -- normal, espera un instante y refresca | Si tarda más de unos segundos, revisa que RabbitMQ y `servicio-consultas` estén sanos |
 | `db-lectura` no arranca / puerto ocupado | El puerto `3308` ya está en uso en tu máquina | Revisa qué otro proceso lo usa, o cambia el mapeo en `docker-compose.yml` |
+| `rabbitmq-1 exited with code 1`, log dice `Error when reading /var/lib/rabbitmq/.erlang.cookie: eacces`, y por lo tanto varios servicios nunca arrancan | Condición de carrera conocida de la propia imagen de RabbitMQ al primer arranque (ver [docker-library/rabbitmq#318](https://github.com/docker-library/rabbitmq/issues/318)). Confirmamos con pruebas reales que en la mayoría de los casos NO es sobre la generación aleatoria del cookie (fijar `RABBITMQ_ERLANG_COOKIE`, que este `docker-compose.yml` ya hace, no bastó por sí solo) -- es **contención de recursos**: construir 5 imágenes y arrancar 10 contenedores a la vez le puede quitar a RabbitMQ el CPU que necesita justo en el instante crítico | Sigue el arranque en 3 pasos de la sección "Instrucciones paso a paso" (`build`, luego `up -d rabbitmq` solo, luego `up -d` para el resto) -- separar la construcción del arranque, y darle a RabbitMQ un momento sin competencia, resuelve el problema en la gran mayoría de los casos, incluso en máquinas donde antes fallaba de forma consistente |
 | Los mismos errores de Docker de siempre | — | Revisa el [`FAQ-TECNICO.md`](../FAQ-TECNICO.md) |
 
 ## Preguntas de reflexión
