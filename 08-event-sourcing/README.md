@@ -68,7 +68,7 @@ alimentado con datos históricos en vez de datos del momento.
 08-event-sourcing/
 ├── README.md
 ├── docker-compose.yml                (idéntico a la Práctica 7)
-├── frontend/                          (idéntico -- cópialo sin cambios)
+├── frontend/                          (+ actualización optimista, ver nota abajo)
 ├── api-gateway/
 │   └── nginx.conf                     (+ rutas /api/eventos y /api/reconstruir)
 ├── servicio-usuarios/                 (idéntico a la Práctica 7)
@@ -89,6 +89,14 @@ alimentado con datos históricos en vez de datos del momento.
 └── db-lectura/
     └── init.sql                        (idéntico)
 ```
+
+**Nota sobre el frontend:** a partir de la Práctica 7, `app.js` actualiza
+la pantalla de forma optimista al crear o completar una tarea (usa lo que
+el propio `POST`/`PATCH` devuelve, sin volver a preguntarle a
+`servicio-consultas` con un `GET`). Es un ajuste retroactivo -- corrige
+un caso donde la tarea recién creada podía tardar en aparecer hasta el
+siguiente cambio, por la consistencia eventual de CQRS (ver el README de
+la Práctica 7, sección "Qué deberías observar").
 
 ## Instrucciones paso a paso
 

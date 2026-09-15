@@ -151,6 +151,17 @@ productor se entere de que ahora son dos en vez de uno.
   la Práctica 5, donde la respuesta del backend y lo que había en la
   base de datos eran, por construcción, la misma cosa en el mismo
   instante.
+- **El frontend se actualiza de forma "optimista".** Cuando creas o
+  completas una tarea, la pantalla se actualiza al instante con lo que
+  el propio `POST`/`PATCH` devolvió -- no vuelve a preguntarle a
+  `servicio-consultas` con un `GET` para confirmarlo. Es la misma razón
+  por la que no ves parpadear o tardar la tarea recién creada: si el
+  frontend esperara siempre un `GET` después de cada cambio, a veces
+  se toparía justo con el instante de consistencia eventual del punto
+  anterior, y la tarea tardaría en aparecer o incluso "desaparecería"
+  momentáneamente en el siguiente refresco. Revisa
+  `frontend/public/app.js` -- `handleAddTask()` y `toggleTaskStatus()`
+  -- para ver exactamente cómo.
 
 ### El experimento central: escritura y lectura fallan por separado
 
