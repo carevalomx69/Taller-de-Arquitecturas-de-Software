@@ -1,0 +1,158 @@
+{
+  "info": {
+    "name": "Práctica 8 - Event Sourcing (Gestor de Tareas)",
+    "description": "Mismo contrato de API que la Practica 7, mas dos peticiones nuevas: GET /api/eventos (el historial completo, la fuente de verdad) y POST /api/reconstruir (el experimento central: reconstruye tasks_read desde cero repitiendo ese historial). Apunta al puerto 4000 -- asegurate de tener 'docker-compose up' corriendo en 08-event-sourcing/ antes de usarla.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:4000",
+      "type": "string"
+    },
+    {
+      "key": "user_id",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "task_id",
+      "value": "1",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Health Check",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/health"
+      }
+    },
+    {
+      "name": "2. Registrar usuario",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"maria\",\n  \"password\": \"1234\"\n}"
+        },
+        "url": "{{base_url}}/api/register"
+      }
+    },
+    {
+      "name": "3. Registrar el mismo usuario otra vez (debe fallar con 409)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"maria\",\n  \"password\": \"1234\"\n}"
+        },
+        "url": "{{base_url}}/api/register"
+      }
+    },
+    {
+      "name": "4. Iniciar sesión",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"maria\",\n  \"password\": \"1234\"\n}"
+        },
+        "url": "{{base_url}}/api/login"
+      }
+    },
+    {
+      "name": "5. Listar tareas del usuario (vacío la primera vez)",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/tasks/{{user_id}}",
+        "description": "Esta peticion, igual que la #7, la responde servicio-consultas, no servicio-tareas -- son las DOS unicas peticiones GET de tareas en esta coleccion, y ambas van al lado de lectura."
+      }
+    },
+    {
+      "name": "6. Crear una tarea",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"userId\": {{user_id}},\n  \"title\": \"Aprender Postman\"\n}"
+        },
+        "url": "{{base_url}}/api/tasks"
+      }
+    },
+    {
+      "name": "7. Listar tareas de nuevo (via servicio-consultas)",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/tasks/{{user_id}}",
+        "description": "OJO -- a diferencia de las practicas anteriores, esta peticion va a un servicio DISTINTO al que uso la peticion #6 para crear la tarea (servicio-consultas, no servicio-tareas). Si la corres INMEDIATAMENTE despues de la #6 y no ves la tarea todavia, no es un error: es consistencia eventual. Espera un instante y vuelve a correrla -- deberia aparecer en cuanto servicio-consultas procese el evento."
+      }
+    },
+    {
+      "name": "8. Completar la tarea",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"status\": \"completed\"\n}"
+        },
+        "url": "{{base_url}}/api/tasks/{{task_id}}"
+      }
+    },
+    {
+      "name": "9. NUEVO -- Ver la bitácora de servicio-auditoria",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/audit",
+        "description": "A diferencia de las peticiones 1-8, esta no le pertenece a servicio-usuarios ni a servicio-tareas -- va a servicio-auditoria, que solo escucha eventos por RabbitMQ y los deja consultar aqui. Corre esta peticion justo despues de la #6 y de la #8 para ver aparecer 'tarea.creada' y 'tarea.completada' en el arreglo, con la hora en que servicio-auditoria los recibio (campo 'recibidoEn')."
+      }
+    },
+    {
+      "name": "10. NUEVO -- Ver el historial completo (event_store)",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/eventos",
+        "description": "La fuente de verdad real del sistema -- a diferencia de la #7 (que consulta tasks_read, una PROYECCION), esta consulta event_store directamente, a traves de servicio-tareas. Cada tarea que creaste y completaste deberia aparecer aqui como DOS eventos separados (TareaCreada y TareaCompletada), no como un solo renglon con el estado final."
+      }
+    },
+    {
+      "name": "11. NUEVO -- Reconstruir tasks_read desde cero (el experimento)",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/reconstruir",
+        "description": "El experimento central de esta practica. Antes de correrla: entra a db-admin-lectura (localhost:8082) y borra el contenido de tasks_read con TRUNCATE TABLE tasks_read; -- luego corre esta peticion y vuelve a correr la #7 (Listar tareas): deberia mostrar exactamente lo mismo que antes de borrarla, reconstruido solo a partir de event_store."
+      }
+    }
+  ]
+}

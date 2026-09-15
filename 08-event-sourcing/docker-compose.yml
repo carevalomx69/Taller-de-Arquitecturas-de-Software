@@ -1,0 +1,177 @@
+services:
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: taskdb
+      MYSQL_USER: taskuser
+      MYSQL_PASSWORD: taskpass
+    volumes:
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "3307:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-prootpass"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  db-admin:
+    image: phpmyadmin:latest
+    environment:
+      PMA_HOST: db
+      PMA_USER: root
+      PMA_PASSWORD: rootpass
+    ports:
+      - "8081:80"
+    depends_on:
+      - db
+
+  # El broker de eventos, ya presente desde la Práctica 6. Sigue exactamente
+  # igual aquí: servicio-tareas sigue publicando en el mismo exchange
+  # "eventos_tareas" de siempre -- lo único nuevo es que, más abajo, un
+  # segundo consumidor (servicio-consultas) se suscribe a él, sin que
+  # rabbitmq ni servicio-tareas necesiten ningún cambio para permitirlo.
+  rabbitmq:
+    image: rabbitmq:3-management
+    environment:
+      # Fija el valor del cookie de Erlang en vez de dejar que RabbitMQ lo
+      # genere solo al arrancar. El error "Error when reading
+      # .erlang.cookie: eacces" ocurre en la ventana de milisegundos en la
+      # que RabbitMQ genera ese archivo y luego lo vuelve a leer -- si
+      # algo (antivirus, un backend de Docker Desktop bajo presión, etc.)
+      # interfiere justo ahí, truena. Dándole el valor de una vez, se
+      # salta ese paso por completo. El valor en sí no importa -- no es
+      # una contraseña real, solo tiene que existir.
+      RABBITMQ_ERLANG_COOKIE: "taller-arquitecturas-cookie-fijo"
+    ports:
+      - "15672:15672"
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # ========== NUEVO en esta práctica ==========
+  # La base de datos del lado de LECTURA -- completamente separada de "db".
+  # servicio-tareas nunca escribe aquí, y servicio-consultas nunca escribe
+  # en "db". Son dos bases de datos físicamente distintas, cada una
+  # propiedad de un solo servicio -- el principio central de CQRS llevado
+  # hasta la infraestructura, no solo hasta el código.
+  db-lectura:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: readdb
+      MYSQL_USER: lectorapp
+      MYSQL_PASSWORD: lectorpass
+    volumes:
+      - ./db-lectura/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "3308:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-prootpass"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # ========== NUEVO en esta práctica ==========
+  # phpMyAdmin apuntando a db-lectura, para que puedas comparar en vivo
+  # los datos "en crudo" del lado de escritura (puerto 8081) contra la
+  # proyección del lado de lectura (puerto 8082) -- deberían decir lo
+  # mismo casi siempre, pero no exactamente al mismo instante (ver README,
+  # "Qué deberías observar").
+  db-admin-lectura:
+    image: phpmyadmin:latest
+    environment:
+      PMA_HOST: db-lectura
+      PMA_USER: root
+      PMA_PASSWORD: rootpass
+    ports:
+      - "8082:80"
+    depends_on:
+      - db-lectura
+
+  servicio-usuarios:
+    build: ./servicio-usuarios
+    environment:
+      DB_HOST: db
+      DB_USER: taskuser
+      DB_PASSWORD: taskpass
+      DB_NAME: taskdb
+    depends_on:
+      db:
+        condition: service_healthy
+    # Sin "ports" -- sigue oculto detrás del api-gateway, igual que en la
+    # Práctica 5. Esta práctica no cambia nada aquí.
+
+  # CAMBIO respecto a la Práctica 6: este servicio ya NO responde
+  # GET /api/tasks/:userId -- revisa su apiAdapter.js. Sigue siendo dueño
+  # exclusivo de "db" (nadie más le escribe), pero ya no es quien resuelve
+  # las lecturas.
+  servicio-tareas:
+    build: ./servicio-tareas
+    environment:
+      DB_HOST: db
+      DB_USER: taskuser
+      DB_PASSWORD: taskpass
+      DB_NAME: taskdb
+      RABBITMQ_URL: amqp://rabbitmq
+    depends_on:
+      db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    # Tampoco expone puerto al host.
+
+  # Ya presente desde la Práctica 6, sin cambios -- sigue siendo un
+  # consumidor más de "eventos_tareas", ahora con un hermano
+  # (servicio-consultas) escuchando la misma frecuencia.
+  servicio-auditoria:
+    build: ./servicio-auditoria
+    environment:
+      RABBITMQ_URL: amqp://rabbitmq
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+
+  # ========== NUEVO en esta práctica ==========
+  # El lado de LECTURA de CQRS. No tiene "depends_on: db" -- a propósito,
+  # igual que servicio-auditoria nunca lo tuvo: este servicio no conoce la
+  # base de datos de escritura en absoluto, solo la suya propia
+  # (db-lectura) y RabbitMQ.
+  servicio-consultas:
+    build: ./servicio-consultas
+    environment:
+      DB_HOST: db-lectura
+      DB_USER: lectorapp
+      DB_PASSWORD: lectorpass
+      DB_NAME: readdb
+      RABBITMQ_URL: amqp://rabbitmq
+      # NUEVO en la Práctica 8 -- necesario para POST /api/reconstruir,
+      # que le pide a servicio-tareas el historial completo de
+      # event_store por HTTP directo (no por RabbitMQ -- ver index.js).
+      SERVICIO_TAREAS_URL: http://servicio-tareas:3000
+    depends_on:
+      db-lectura:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    # Tampoco expone puerto al host -- solo el api-gateway le habla.
+
+  api-gateway:
+    build: ./api-gateway
+    ports:
+      - "4000:80"
+    depends_on:
+      - servicio-usuarios
+      - servicio-tareas
+      - servicio-auditoria
+      - servicio-consultas
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "8080:80"
+    depends_on:
+      - api-gateway
