@@ -1,0 +1,76 @@
+{
+  "info": {
+    "name": "Práctica 9 completa - Serverless (Gestor de Tareas)",
+    "description": "base_url es tu propia URL de Vercel (https://tu-proyecto.vercel.app), no localhost. Las mismas 8 peticiones de siempre, contra funciones serverless en vez de un backend Docker.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url", "value": "https://TU-PROYECTO.vercel.app", "type": "string" },
+    { "key": "user_id", "value": "1", "type": "string" },
+    { "key": "task_id", "value": "1", "type": "string" }
+  ],
+  "item": [
+    {
+      "name": "1. Registrar usuario",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\n  \"username\": \"maria\",\n  \"password\": \"1234\"\n}" },
+        "url": "{{base_url}}/api/register"
+      }
+    },
+    {
+      "name": "2. Registrar el mismo usuario otra vez (debe fallar con 409)",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\n  \"username\": \"maria\",\n  \"password\": \"1234\"\n}" },
+        "url": "{{base_url}}/api/register"
+      }
+    },
+    {
+      "name": "3. Iniciar sesión",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\n  \"username\": \"maria\",\n  \"password\": \"1234\"\n}" },
+        "url": "{{base_url}}/api/login"
+      }
+    },
+    {
+      "name": "4. Listar tareas del usuario (vacío la primera vez)",
+      "request": { "method": "GET", "url": "{{base_url}}/api/tasks/{{user_id}}" }
+    },
+    {
+      "name": "5. Crear una tarea",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\n  \"userId\": {{user_id}},\n  \"title\": \"Cerrar el ciclo de arquitecturas\"\n}" },
+        "url": "{{base_url}}/api/tasks"
+      }
+    },
+    {
+      "name": "6. Listar tareas de nuevo (ya debe aparecer)",
+      "request": { "method": "GET", "url": "{{base_url}}/api/tasks/{{user_id}}" }
+    },
+    {
+      "name": "7. Completar la tarea",
+      "request": {
+        "method": "PATCH",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\n  \"status\": \"completed\"\n}" },
+        "url": "{{base_url}}/api/tasks/{{task_id}}"
+      }
+    },
+    {
+      "name": "8. Iniciar sesión con password incorrecto (debe fallar 401)",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\n  \"username\": \"maria\",\n  \"password\": \"incorrecta\"\n}" },
+        "url": "{{base_url}}/api/login"
+      }
+    }
+  ]
+}
