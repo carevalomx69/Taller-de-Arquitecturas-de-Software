@@ -54,6 +54,13 @@ Lo nuevo:
 - Una cuenta en GitHub, con este código subido a un repositorio tuyo
   (puede ser el mismo `Taller-de-Arquitecturas-de-Software`, o uno
   aparte -- ver la sección de despliegue).
+- **Guarda los "recovery codes" (códigos de recuperación) que Vercel o
+  GitHub te ofrezcan al activar verificación en dos pasos, en cuanto te
+  los muestren.** Son la única forma de recuperar el acceso a tu cuenta
+  si pierdes tu segundo factor (el teléfono, la app de autenticación,
+  etc.) -- y solo se muestran una vez, en el momento de activarla. Un
+  lugar seguro fuera de la propia cuenta (un gestor de contraseñas, una
+  nota física) es mejor que un archivo de texto suelto en tu escritorio.
 - Haber revisado la diapositiva **"Serverless"**.
 
 ## Estructura de archivos
@@ -207,7 +214,8 @@ tu propia URL de Vercel antes de correrlas (cada alumno tiene la suya).
 |---|---|---|
 | Las funciones responden `500` con algo sobre `DATABASE_URL` | Desplegaste antes de conectar la base de datos, o no volviste a desplegar después de conectarla | Repite el paso 5 ("Redeploy") después de conectar Neon |
 | `relation "tasks" does not exist` | Se te olvidó correr `schema.sql` en el SQL Editor de Neon | Repite el paso 4 |
-| `404 NOT_FOUND` al llamar a `/api/crear-tarea` | El archivo no está exactamente en `api/crear-tarea.js` en la raíz del repo que conectaste a Vercel | Revisa la estructura de carpetas -- Vercel es estricto con esto |
+| `404 NOT_FOUND` (página de error de Vercel, no un JSON) al llamar a `/api/crear-tarea` o `/api/listar-tareas` | Casi siempre: el repo de GitHub tiene una carpeta contenedora de más -- por ejemplo `mi-repo/09-serverless/api/...` en vez de `mi-repo/api/...`. Pasa fácil si arrastraste la carpeta descomprimida completa a tu explorador de archivos y el `git init` quedó un nivel arriba de donde debía. Revisa la ruta de tu repo en GitHub para confirmarlo (¿ves `api/` directo en la raíz, o dentro de otra carpeta?) | En Vercel: **Settings -> Build and Deployment -> Root Directory -> Edit**, escribe el nombre exacto de esa subcarpeta (p. ej. `09-serverless`), **Save**. Luego **Deployments -> el más reciente -> "..." -> Redeploy** -- el cambio de Root Directory no aplica al deployment que ya existe, solo al siguiente |
+| Al volver al dashboard justo después de un Redeploy, aparece un "Something went wrong" pasajero | Glitch de interfaz -- el dashboard tarda un instante en refrescar el estado justo después de que termina un despliegue | Refresca la página (F5); si tus funciones ya responden bien y no vuelve a aparecer, no hay nada que arreglar. Si se repite de forma consistente, sí revisa la pestaña Logs de ese deployment |
 | Todo funciona en un compañero y a ti no | Cada quien tiene su propia base de datos y su propio despliegue -- no hay nada compartido entre alumnos aquí, a diferencia de todo el taller anterior | Revisa tus propios logs en tu propio dashboard de Vercel, no compares directamente con el de alguien más |
 
 ## Preguntas de reflexión
