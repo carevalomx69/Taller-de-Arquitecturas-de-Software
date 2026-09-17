@@ -1,0 +1,53 @@
+{
+  "info": {
+    "name": "Práctica 9 - Serverless (Gestor de Tareas)",
+    "description": "A diferencia de las colecciones anteriores, 'base_url' aquí NO es localhost -- es tu propia URL de despliegue en Vercel (algo como https://tu-proyecto.vercel.app). Cada alumno tiene la suya. Solo dos peticiones: crear y listar tareas.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url", "value": "https://TU-PROYECTO.vercel.app", "type": "string" }
+  ],
+  "item": [
+    {
+      "name": "1. Crear una tarea",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\n  \"userId\": 1,\n  \"title\": \"Aprender Serverless\"\n}" },
+        "url": "{{base_url}}/api/crear-tarea"
+      }
+    },
+    {
+      "name": "2. Crear una segunda tarea",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\n  \"userId\": 1,\n  \"title\": \"Desplegar en Vercel\"\n}" },
+        "url": "{{base_url}}/api/crear-tarea"
+      }
+    },
+    {
+      "name": "3. Listar tareas del usuario 1",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/listar-tareas?userId=1"
+      }
+    },
+    {
+      "name": "4. Crear sin title (debe fallar 400)",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\n  \"userId\": 1\n}" },
+        "url": "{{base_url}}/api/crear-tarea"
+      }
+    },
+    {
+      "name": "5. Listar sin userId (debe fallar 400)",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/listar-tareas"
+      }
+    }
+  ]
+}

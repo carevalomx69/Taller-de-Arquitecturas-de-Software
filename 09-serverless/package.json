@@ -1,0 +1,8 @@
+{
+  "name": "09-serverless",
+  "version": "1.0.0",
+  "description": "Gestor de Tareas -- funciones serverless (Vercel + Neon Postgres)",
+  "dependencies": {
+    "@neondatabase/serverless": "^0.9.0"
+  }
+}
