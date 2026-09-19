@@ -1,12 +1,12 @@
 # Gestor de Tareas: un recorrido por 9 arquitecturas de software
 
 Este repositorio contiene las 9 prácticas de la Unidad II de Diseño de
-Software. Todas parten de **la misma aplicación** — un gestor de tareas con
-usuarios y tareas (ver [`00-recursos-comunes/modelo-datos.md`](00-recursos-comunes/modelo-datos.md))
-— y cada práctica la transforma para resolver un problema concreto que dejó
+Software. Todas parten de **la misma aplicación**, la cual es un gestor de tareas con
+usuarios y tareas (ver [`00-recursos-comunes/modelo-datos.md`](00-recursos-comunes/modelo-datos.md)). 
+En cada práctica se modifica para resolver un problema concreto que dejó
 la anterior. La arquitectura no es un catálogo de estilos que memorizar: es
-una historia de decisiones, y aquí puedes ver el código antes y después de
-cada una.
+una muestra de decisiones de diseño, en donde se puede ver el código antes y después de
+cada patrón arquitectónico.
 
 **Sugerencia:** usa el comparador de archivos de GitHub para ver el `diff`
 entre una carpeta y la siguiente — es la forma más directa de ver qué cambió
@@ -15,10 +15,10 @@ y por qué.
 ## Antes de empezar: Práctica 0
 
 [`00-practica-0-xampp/`](00-practica-0-xampp/) es una demostración guiada
-(no calificada) que usa XAMPP — algo que probablemente ya conoces de otras
-materias — para diseccionar en vivo qué es un monolito, antes de verlo con
+(no calificada) que usa XAMPP, algo que probablemente ya conoces de otras
+materias,  para diseccionar en vivo qué es un monolito, antes de verlo con
 Docker. Usa un dominio distinto (una mini "biblioteca") a propósito, para
-no mezclarse con el hilo conductor del gestor de tareas.
+no mezclarse con el hilo conductor del gestor de tareas de ejemplo.
 
 **¿Problemas instalando Docker, o quieres descargar solo una carpeta del
 repo?** Revisa el [`FAQ-TECNICO.md`](FAQ-TECNICO.md) — cubre los problemas
