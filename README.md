@@ -9,7 +9,7 @@ una muestra de decisiones de diseño, en donde se puede ver el código antes y d
 cada patrón arquitectónico.
 
 **Sugerencia:** usa el comparador de archivos de GitHub para ver el `diff`
-entre una carpeta y la siguiente — es la forma más directa de ver qué cambió
+entre una carpeta y la siguiente, es la forma más directa de ver qué cambió
 y por qué.
 
 ## Antes de empezar: Práctica 0
@@ -21,7 +21,7 @@ Docker. Usa un dominio distinto (una mini "biblioteca") a propósito, para
 no mezclarse con el hilo conductor del gestor de tareas de ejemplo.
 
 **¿Problemas instalando Docker, o quieres descargar solo una carpeta del
-repo?** Revisa el [`FAQ-TECNICO.md`](FAQ-TECNICO.md) — cubre los problemas
+repo?** Revisa el [`FAQ-TECNICO.md`](FAQ-TECNICO.md), cubre los problemas
 de instalación más frecuentes (falta WSL2 en Windows, virtualización
 deshabilitada en el BIOS) y cómo usar `git sparse-checkout` para bajar
 solo la práctica que necesitas.
@@ -32,17 +32,17 @@ solo la práctica que necesitas.
 |---|---|---|---|---|
 | 1 | Monolito | Punto de partida: todo junto para lanzar rápido | [`01-monolito/`](01-monolito/) | "Monolito — en una mirada" |
 | 1.5 | *(intermedio)* Postman y HTTP | Ver un GET/POST "desnudo" antes de seguir — sin esto, el resto de la unidad da por hecho un modelo mental que muchos alumnos aún no tienen | [`01.5-postman-http/`](01.5-postman-http/) | "APIs" / "Cómo se ve una API" |
-| 2 | Cliente-Servidor | Varios usuarios necesitan acceder a los mismos datos | [`02-cliente-servidor/`](02-cliente-servidor/) | "Cliente-Servidor — en una mirada" |
+| 2 | Cliente-Servidor | Varios usuarios necesitan acceder a los mismos datos | [`02-cliente-servidor/`](02-cliente-servidor/) | "Cliente-Servidor: en una mirada" |
 | 3 | Capas / MVC | El servidor mezcla presentación, lógica y datos | [`03-capas-mvc/`](03-capas-mvc/) | "MVC — en una mirada" |
-| 4 | Hexagonal | Probar la lógica exige levantar toda la infraestructura | [`04-hexagonal/`](04-hexagonal/) | "Hexagonal — en una mirada" |
-| 5 | Microservicios | Un solo servidor ya no escala ni se despliega por partes | [`05-microservicios/`](05-microservicios/) | "Microservicios — en una mirada" |
-| 6 | Orientado a Eventos | Los servicios siguen acoplados por llamadas síncronas | [`06-orientado-a-eventos/`](06-orientado-a-eventos/) | "Orientado a Eventos — en una mirada" |
+| 4 | Hexagonal | Probar la lógica exige levantar toda la infraestructura | [`04-hexagonal/`](04-hexagonal/) | "Hexagonal: en una mirada" |
+| 5 | Microservicios | Un solo servidor ya no escala ni se despliega por partes | [`05-microservicios/`](05-microservicios/) | "Microservicios: en una mirada" |
+| 6 | Orientado a Eventos | Los servicios siguen acoplados por llamadas síncronas | [`06-orientado-a-eventos/`](06-orientado-a-eventos/) | "Orientado a Eventos: en una mirada" |
 | 7 | CQRS | Cargas de lectura y escritura muy distintas entre sí | [`07-cqrs/`](07-cqrs/) | "CQRS — en una mirada" |
-| 8 | Event Sourcing | Se necesita un historial auditable, no solo el estado final | [`08-event-sourcing/`](08-event-sourcing/) | "Event Sourcing — en una mirada" |
-| 9 | Serverless / FaaS | Mantener infraestructura corriendo 24/7 para algo que se usa poco | [`09-serverless/`](09-serverless/) | "Serverless / FaaS — en una mirada" |
+| 8 | Event Sourcing | Se necesita un historial auditable, no solo el estado final | [`08-event-sourcing/`](08-event-sourcing/) | "Event Sourcing: en una mirada" |
+| 9 | Serverless / FaaS | Mantener infraestructura corriendo 24/7 para algo que se usa poco | [`09-serverless/`](09-serverless/) | "Serverless / FaaS: en una mirada" |
 
 **Nota sobre la 1.5:** no es una arquitectura, así que no encaja en la
-numeración de patrones — pero se hizo evidente su necesidad al ver que la
+numeración de patrones, pero se hizo evidente su necesidad al ver que la
 mayoría del grupo no lograba visualizar el flujo real de una petición
 HTTP en las prácticas 2 y 3. No tiene su propio `docker-compose.yml`;
 reutiliza el contenedor de la Práctica 1 tal cual.
@@ -50,7 +50,7 @@ reutiliza el contenedor de la Práctica 1 tal cual.
 ## Cómo usar cada práctica
 
 1. Entra a la carpeta de la práctica correspondiente.
-2. Lee su `README.md` — cada una explica su objetivo, qué cambió respecto a
+2. Lee su `README.md`, cada una explica su objetivo, qué cambió respecto a
    la anterior, cómo correrla con Docker, qué deberías observar, y las
    preguntas de reflexión que debes entregar.
 3. La mayoría de las prácticas usan `docker-compose up --build`; la
@@ -60,7 +60,7 @@ reutiliza el contenedor de la Práctica 1 tal cual.
 ## Flujo de trabajo entre prácticas
 
 Cada práctica corre **en limpio**, sin depender de contenedores de la
-práctica anterior — y de hecho no debe hacerlo, para que la comparación
+práctica anterior, y de hecho no debe hacerlo, para que la comparación
 entre prácticas sea siempre sobre el código, no sobre datos residuales de
 una corrida pasada.
 
@@ -103,5 +103,5 @@ siguiente no podrá levantar sus servicios — verás el error
 - Mismo entregable: capturas de pantalla + `REFLEXION.md` con las preguntas
   de cada práctica.
 - A partir de la Práctica 2, cada carpeta trae un `postman_collection.json`
-  opcional — casi idéntico entre prácticas, porque el contrato de la API
+  opcional casi idéntico entre prácticas, porque el contrato de la API
   no cambia aunque la arquitectura por dentro sí.
