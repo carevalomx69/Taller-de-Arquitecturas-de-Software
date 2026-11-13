@@ -82,7 +82,7 @@ Para la Práctica 1 (que no usa `docker-compose`, solo `docker run`):
 docker stop <container_id>
 ```
 
-De vez en cuando — no necesariamente entre cada práctica, pero sí si el
+De vez en cuando (no necesariamente entre cada práctica), pero si el
 disco se empieza a llenar de imágenes viejas:
 
 ```
@@ -92,7 +92,7 @@ docker system prune
 **Por qué importa:** los puertos se repiten a propósito entre prácticas
 (8080, 4000, 3307, 8081...) para no tener que memorizar 9 combinaciones
 distintas. Esto significa que si dejas corriendo una práctica anterior, la
-siguiente no podrá levantar sus servicios — verás el error
+siguiente no podrá levantar sus servicios, verás el error
 `"port is already allocated"` del [`FAQ-TECNICO.md`](FAQ-TECNICO.md).
 
 ## Convenciones que se mantienen en las 9 prácticas
